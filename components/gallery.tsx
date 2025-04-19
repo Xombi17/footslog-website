@@ -1,63 +1,98 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { motion, AnimatePresence, useInView } from "framer-motion"
+import { useRef } from "react"
+import { motion, useInView } from "framer-motion"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { ChevronRight } from "lucide-react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useEffect } from "react"
 
-const galleryImages = [
+// Sandhan Valley natural wonders data
+const naturalWonders = [
   {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Trekkers climbing a mountain path",
-    caption: "Conquering the summit",
+    name: "Stargazing Experience",
+    description: "Experience the breathtaking night sky view from Sandhan Valley, one of Maharashtra's best stargazing spots. The narrow gorge opens up to reveal a blanket of stars unlike anything you've seen in the city.",
+    stats: { bestTime: "Clear moonless nights", duration: "2-3 hours", highlight: "Milky Way visibility" },
+    image: "/images/sandhanvalley.png",
   },
   {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Group photo at campsite",
-    caption: "Evening at base camp",
+    name: "Firefly Magic",
+    description: "During pre-monsoon months, witness the magical spectacle of thousands of fireflies illuminating the valley with their synchronous flashing, creating a natural light show in the forest.",
+    stats: { bestTime: "May-June", duration: "Evening hours", highlight: "Synchronous flashing" },
+    image: "/images/sandhanvalley.png",
   },
   {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Waterfall during trek",
-    caption: "Refreshing waterfall stop",
+    name: "Valley of Shadows",
+    description: "Known as the 'Valley of Shadows,' Sandhan's towering walls create dramatic light and shadow effects throughout the day as sunlight filters through the narrow gorge.",
+    stats: { bestTime: "Morning/Evening", duration: "All day", highlight: "Golden hour shadows" },
+    image: "/images/sandhanvalley.png",
   },
   {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Sunrise view from mountain",
-    caption: "Sunrise from the peak",
-  },
-  {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Trek through dense forest",
-    caption: "Jungle exploration",
-  },
-  {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Team building activities",
-    caption: "Team bonding activities",
-  },
+    name: "Night Camping",
+    description: "Surrounded by the majestic Sahyadri range, camping in Sandhan Valley offers an otherworldly experience. Fall asleep to the sounds of nature and wake up to the breathtaking valley views.",
+    stats: { bestTime: "Winter months", duration: "Overnight", highlight: "Sunrise views" },
+    image: "/images/sandhanvalley.png",
+  }
 ]
 
-export default function Gallery() {
+export default function NaturalWonders() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
-  const [selectedImage, setSelectedImage] = useState<number | null>(null)
+  const cardRefs = useRef<HTMLDivElement[]>([])
 
-  const nextImage = () => {
-    if (selectedImage === null) return
-    setSelectedImage((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1))
-  }
+  // GSAP Animation
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+    
+    cardRefs.current.forEach((card, index) => {
+      gsap.fromTo(
+        card,
+        { 
+          y: 100,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 90%",
+            end: "bottom 20%",
+            toggleActions: "play reverse play reverse"
+          },
+          delay: index * 0.2
+        }
+      )
+    })
 
-  const prevImage = () => {
-    if (selectedImage === null) return
-    setSelectedImage((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1))
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+    }
+  }, [])
+
+  // Add card reference
+  const addCardRef = (el: HTMLDivElement | null) => {
+    if (el && !cardRefs.current.includes(el)) {
+      cardRefs.current.push(el)
+    }
   }
 
   return (
-    <section ref={sectionRef} className="relative py-20" id="gallery">
+    <section 
+      ref={sectionRef} 
+      className="relative py-20" 
+      id="wonders"
+      style={{
+        background: "linear-gradient(to bottom, #113907, #0A1508)"
+      }}
+    >
       {/* Background with overlay */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[#1A2614]/90 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-[#0A1508]/80" />
+        <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('/images/stars-bg.svg')] bg-repeat"></div>
       </div>
 
       <div className="container relative z-10 mx-auto px-4">
@@ -67,93 +102,65 @@ export default function Gallery() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <h2 className="font-serif text-4xl font-bold text-[#D4A72C] md:text-5xl">Trek Gallery</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-[#E5E1D6]">
-            Glimpses from our previous adventures in the wild
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-[#F3B939] mb-4 tracking-wide">
+            Natural Wonders
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-white/90">
+            Discover the magical experiences awaiting you at Sandhan Valley
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {galleryImages.map((image, index) => (
-            <motion.div
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {naturalWonders.map((wonder, index) => (
+            <div 
               key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
-              className="group relative cursor-pointer overflow-hidden rounded-lg"
-              onClick={() => setSelectedImage(index)}
+              ref={addCardRef}
+              className="bg-[#0A1508]/70 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl border border-[#243420]/50 hover:border-[#F3B939]/30 transition-all duration-500"
             >
-              <div className="aspect-[4/3] w-full overflow-hidden">
-                <Image
-                  src={image.src || "/placeholder.svg"}
-                  alt={image.alt}
-                  width={600}
-                  height={400}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              <div className="relative h-64">
+                <Image 
+                  src={wonder.image} 
+                  alt={wonder.name}
+                  fill
+                  className="object-cover"
                 />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              <div className="absolute bottom-0 left-0 w-full p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <p className="text-sm font-medium">{image.caption}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Lightbox */}
-        <AnimatePresence>
-          {selectedImage !== null && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
-              onClick={() => setSelectedImage(null)}
-            >
-              <button
-                className="absolute right-4 top-4 rounded-full bg-black/50 p-2 text-white"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setSelectedImage(null)
-                }}
-              >
-                <X className="h-6 w-6" />
-              </button>
-              <button
-                className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  prevImage()
-                }}
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </button>
-              <button
-                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  nextImage()
-                }}
-              >
-                <ChevronRight className="h-6 w-6" />
-              </button>
-              <div className="relative max-h-[80vh] max-w-4xl">
-                <Image
-                  src={galleryImages[selectedImage].src || "/placeholder.svg"}
-                  alt={galleryImages[selectedImage].alt}
-                  width={1200}
-                  height={800}
-                  className="max-h-[80vh] w-auto rounded-lg object-contain"
-                />
-                <div className="absolute bottom-0 left-0 w-full rounded-b-lg bg-black/50 p-4 text-white">
-                  <p className="text-center text-lg font-medium">{galleryImages[selectedImage].caption}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A1508] to-transparent" />
+                <div className="absolute bottom-0 left-0 w-full p-6">
+                  <h3 className="text-2xl font-bold text-[#F3B939]">{wonder.name}</h3>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              
+              <div className="p-6">
+                <p className="text-white/90 mb-6">{wonder.description}</p>
+                
+                <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="bg-[#1A2614]/70 rounded-lg px-3 py-2 flex-1">
+                    <p className="text-[#F3B939] font-medium mb-1">Best Time</p>
+                    <p className="text-white">{wonder.stats.bestTime}</p>
+                  </div>
+                  <div className="bg-[#1A2614]/70 rounded-lg px-3 py-2 flex-1">
+                    <p className="text-[#F3B939] font-medium mb-1">Duration</p>
+                    <p className="text-white">{wonder.stats.duration}</p>
+                  </div>
+                  <div className="bg-[#1A2614]/70 rounded-lg px-3 py-2 flex-1">
+                    <p className="text-[#F3B939] font-medium mb-1">Highlight</p>
+                    <p className="text-white">{wonder.stats.highlight}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <div className="text-center mt-12">
+          <a 
+            href="/register" 
+            className="inline-flex items-center gap-2 bg-[#F3B939] hover:bg-amber-500 text-[#0A1508] font-bold rounded-full transition-all duration-300 px-8 py-3 shadow-lg hover:shadow-amber-400/30"
+          >
+            <span>Experience these wonders</span>
+            <ChevronRight className="h-5 w-5" />
+          </a>
+        </div>
       </div>
     </section>
   )

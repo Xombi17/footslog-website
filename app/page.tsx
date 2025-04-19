@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import Preloader from "@/components/preloader"
 import Navigation from "@/components/navigation"
 import HeroSection from "@/components/hero-section"
 import EventOverview from "@/components/event-overview"
@@ -18,8 +19,9 @@ import AchievementsStats from "@/components/achievements-stats"
 export default function Home() {
   return (
     <ParallaxProvider>
-      <Suspense>
+      <Suspense fallback={<Preloader />}>
         <main className="relative overflow-hidden">
+          <Preloader />
           <Navigation />
           <BackgroundMusic />
 

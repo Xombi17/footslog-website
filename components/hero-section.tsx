@@ -300,7 +300,7 @@ export default function HeroSection() {
             className="hero-cta opacity-0"
           >
             <Link
-              href="#about"
+              href="/register"
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-[#D4A72C] bg-[#113907] px-8 py-3 font-bold text-white transition-all duration-300 ease-out hover:scale-105 hover:bg-gradient-to-r hover:from-[#215812] hover:to-[#113907] hover:shadow-lg hover:shadow-green-500/20"
             >
               <span className="relative z-10 flex items-center text-lg font-medium tracking-wider">

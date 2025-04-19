@@ -75,16 +75,18 @@ export default function Navigation() {
   // Navigation links with icons
   const links = [
     { href: "/", label: "Home", icon: <Home className="w-5 h-5" /> },
-    { href: "/about", label: "About", icon: <InfoIcon className="w-5 h-5" /> },
-    { href: "/events", label: "Events", icon: <Calendar className="w-5 h-5" /> },
-    { href: "/register", label: "Register", icon: <Users className="w-5 h-5" /> },
+    { href: "/#about", label: "About", icon: <InfoIcon className="w-5 h-5" /> },
+    { href: "/#highlights", label: "Highlights", icon: <Compass className="w-5 h-5" /> },
+    { href: "/#itinerary", label: "Itinerary", icon: <Calendar className="w-5 h-5" /> },
+    { href: "/#faq", label: "FAQ", icon: <Users className="w-5 h-5" /> },
   ]
   
   // Home page specific links for smooth scrolling
   const homeLinks = pathname === '/' ? [
     { href: "#about", label: "About", icon: <InfoIcon className="w-5 h-5" /> },
-    { href: "#events", label: "Events", icon: <Calendar className="w-5 h-5" /> },
-    { href: "#register", label: "Register", icon: <Users className="w-5 h-5" /> },
+    { href: "#highlights", label: "Highlights", icon: <Compass className="w-5 h-5" /> },
+    { href: "#itinerary", label: "Itinerary", icon: <Calendar className="w-5 h-5" /> },
+    { href: "#faq", label: "FAQ", icon: <Users className="w-5 h-5" /> },
   ] : [];
   
   // Combine links - show internal anchor links only when on home page
@@ -93,6 +95,11 @@ export default function Navigation() {
   // Function to check if link is active
   const isActive = (path: string) => {
     if (path === '/' && pathname === '/') return true
+    if (path.startsWith('/#') && pathname === '/') {
+      // Check if we're on the homepage and the hash matches current section
+      const hash = window.location.hash;
+      return hash === path.substring(1) || (hash === '' && path === '/#about');
+    }
     if (path !== '/' && !path.startsWith('#') && pathname.startsWith(path)) return true
     return false
   }
@@ -150,7 +157,7 @@ export default function Navigation() {
               </div>
               <div className="relative">
                 <motion.span 
-                  className="font-display font-bold text-[#F3B939] text-2xl tracking-wide hidden md:block"
+                  className="font-display font-bold text-[#F3B939] text-xl md:text-2xl tracking-wide block"
                   animate={{ 
                     textShadow: [
                       "0 0 8px rgba(243, 185, 57, 0.3)",
@@ -173,7 +180,7 @@ export default function Navigation() {
           </motion.div>
 
           {/* Desktop Navigation - truly centered */}
-          <div className="hidden md:flex space-x-12 items-center">
+          <div className="hidden md:flex space-x-8 items-center">
             {navLinks.map((link, index) => (
               <motion.div
                 key={link.label}
@@ -195,7 +202,7 @@ export default function Navigation() {
                     {link.label}
                   </span>
                   <span 
-                    className={`absolute bottom-0 left-0 h-0.5 bg-[#F3B939] transition-all duration-300 ${
+                    className={`absolute -bottom-2 left-0 h-0.5 bg-[#F3B939] transition-all duration-300 ${
                       isActive(link.href) 
                         ? "w-full" 
                         : "w-0 group-hover:w-full"
@@ -206,7 +213,24 @@ export default function Navigation() {
             ))}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Register button - right aligned on desktop */}
+          <motion.div
+            className="hidden md:block md:absolute md:right-4"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
+            <Link 
+              href="/#register" 
+              onClick={(e) => handleLinkClick(e, "/#register")}
+              className="bg-[#243420] hover:bg-[#2c4127] text-[#F3B939] font-medium py-2 px-5 rounded-md transition-all duration-300 inline-flex items-center border border-[#F3B939]/40 hover:border-[#F3B939] shadow-sm"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Register
+            </Link>
+          </motion.div>
+
+          {/* Mobile menu button with jungle-themed styling */}
           <motion.div 
             className="md:hidden"
             initial={{ opacity: 0 }}
@@ -215,7 +239,7 @@ export default function Navigation() {
           >
             <button
               onClick={toggleMenu}
-              className="text-[#E5E1D6] hover:text-[#F3B939] p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#F3B939]"
+              className="text-[#F3B939] hover:text-[#F3B939] p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#F3B939] bg-[#243420]/70"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
@@ -228,23 +252,24 @@ export default function Navigation() {
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu with improved styling */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="md:hidden absolute top-full left-0 right-0 bg-[#0F1A0A]/95 backdrop-blur-md"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden fixed top-[60px] left-0 right-0 bottom-0 bg-[#0F1A0A]/95 backdrop-blur-md z-40"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
             transition={{ duration: 0.3 }}
           >
-            <div className="flex flex-col items-center py-4 space-y-4">
+            <div className="flex flex-col items-center py-8 space-y-6 h-full justify-center">
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.label}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: 0.1 * index }}
+                  className="w-64"
                 >
                   <Link
                     href={link.href}
@@ -252,17 +277,53 @@ export default function Navigation() {
                       handleLinkClick(e, link.href)
                       setIsMenuOpen(false)
                     }}
-                    className={`flex items-center py-2 px-4 w-full justify-center transition-colors duration-300 rounded-lg ${
+                    className={`flex items-center py-3 px-6 w-full justify-center transition-all duration-300 rounded-lg ${
                       isActive(link.href)
-                        ? "text-[#F3B939] bg-[#243420]/80"
-                        : "text-[#E5E1D6] hover:text-[#F3B939] hover:bg-[#243420]/50"
+                        ? "text-[#F3B939] bg-[#243420] border-2 border-[#F3B939]/30 shadow-md shadow-[#F3B939]/10"
+                        : "text-[#E5E1D6] hover:text-[#F3B939] hover:bg-[#243420]/70 border-2 border-transparent"
                     }`}
                   >
                     <span className="mr-3">{link.icon}</span>
-                    {link.label}
+                    <span className="text-lg">{link.label}</span>
                   </Link>
                 </motion.div>
               ))}
+              
+              {/* Register button for mobile */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.5 }}
+                className="w-64 mt-4"
+              >
+                <Link
+                  href="/#register"
+                  onClick={(e) => {
+                    handleLinkClick(e, "/#register")
+                    setIsMenuOpen(false)
+                  }}
+                  className="flex items-center py-3 px-6 w-full justify-center transition-all duration-300 rounded-md bg-[#243420] text-[#F3B939] font-medium border border-[#F3B939]/40"
+                >
+                  <Users className="w-5 h-5 mr-3" />
+                  <span className="text-lg">Register</span>
+                </Link>
+              </motion.div>
+              
+              {/* Decorative jungle element at bottom of mobile menu */}
+              <motion.div 
+                className="absolute bottom-8 opacity-20"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.2, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <Image
+                  src="/images/paw-prints.svg"
+                  alt="Jungle decoration"
+                  width={100}
+                  height={40}
+                  className="object-contain"
+                />
+              </motion.div>
             </div>
           </motion.div>
         )}

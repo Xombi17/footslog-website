@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
-import { Resend } from 'resend';
 
 // Check if we have the required environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -12,14 +11,6 @@ if (!supabaseUrl || !supabaseKey) {
 
 // Initialize Supabase client
 export const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Initialize Resend client for email
-let resend: Resend | null = null;
-if (process.env.EMAIL_API_KEY) {
-  resend = new Resend(process.env.EMAIL_API_KEY);
-} else {
-  console.warn('Missing EMAIL_API_KEY. Email functionality will be disabled.');
-}
 
 // Types
 interface EmailContent {
@@ -33,6 +24,18 @@ interface RegistrationData {
   data: Record<string, any>;
   payment_status?: string;
   ticket_id?: string;
+}
+
+// Initialize Resend client for email
+let resend: any = null;
+
+// Dynamically import Resend to avoid build issues
+if (process.env.EMAIL_API_KEY) {
+  import('resend').then(({ Resend }) => {
+    resend = new Resend(process.env.EMAIL_API_KEY);
+  }).catch((error) => {
+    console.warn('Failed to initialize Resend:', error);
+  });
 }
 
 // Get all registrations
@@ -131,7 +134,7 @@ export async function sendEmailNotification(
   content: EmailContent
 ) {
   if (!resend) {
-    console.warn('Email service not configured. Skipping email notification.');
+    console.warn('Email service not configured or still initializing. Skipping email notification.');
     return null;
   }
 

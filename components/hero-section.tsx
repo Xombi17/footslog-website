@@ -222,7 +222,7 @@ export default function HeroSection() {
             priority
             className="object-cover opacity-60"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0F1A0A]/40 to-[#0F1A0A]/90 z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0F1A0A]/40 via-[#0F1A0A]/70 to-[#0F1A0A] z-10"></div>
         </div>
         
         {/* Particles Background */}

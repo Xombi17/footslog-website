@@ -273,3 +273,29 @@ section + section {
 section::after {
   display: none;
 }
+
+/* Disable section transitions and lines completely */
+section {
+  border: none !important;
+  box-shadow: none !important;
+  position: relative;
+  overflow: visible;
+}
+
+section::after,
+section::before {
+  display: none !important;
+}
+
+/* Ensure sections flow seamlessly */
+section + section {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Enhance section blending */
+#highlights {
+  background-color: #0F1A0A !important;
+  position: relative;
+  z-index: 10;
+}

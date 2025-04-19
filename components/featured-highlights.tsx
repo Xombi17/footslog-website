@@ -36,8 +36,12 @@ export default function FeaturedHighlights() {
   return (
     <section 
       ref={sectionRef} 
-      className="bg-gradient-to-b from-[#0a2304] to-[#113907] relative" 
+      className="bg-[#0F1A0A] relative" 
       id="highlights"
+      style={{
+        background: "linear-gradient(to bottom, #0F1A0A, #113907)",
+        marginTop: "-2px", // Tiny negative margin to hide potential seam
+      }}
     >
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
@@ -49,7 +53,7 @@ export default function FeaturedHighlights() {
       <div className="pb-12 pt-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto animate-on-scroll">
-            <div className="bg-[#0c2d05]/70 backdrop-blur-sm rounded-2xl p-10 shadow-2xl">
+            <div className="bg-[#0A1508]/70 backdrop-blur-sm rounded-2xl p-10 shadow-2xl border border-[#1A2614]/30">
               <h3 className="text-3xl md:text-4xl font-bold text-[#F3B939] mb-6 text-center">
                 Countdown to Adventure
               </h3>
@@ -69,7 +73,7 @@ export default function FeaturedHighlights() {
                     className="flex flex-col items-center animate-on-scroll"
                     style={{ animationDelay: `${i * 100}ms` }}
                   >
-                    <div className="bg-[#0a2304] border-2 border-[#F3B939]/20 rounded-lg w-24 h-24 md:w-32 md:h-32 flex items-center justify-center mb-3 shadow-2xl relative overflow-hidden">
+                    <div className="bg-[#0A1508] border-2 border-[#F3B939]/20 rounded-lg w-24 h-24 md:w-32 md:h-32 flex items-center justify-center mb-3 shadow-2xl relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-b from-[#F3B939]/5 to-transparent"></div>
                       <span className="text-4xl md:text-5xl font-bold text-[#F3B939] relative z-10">
                         {String(unit.value).padStart(2, "0")}
@@ -83,7 +87,7 @@ export default function FeaturedHighlights() {
               <div className="text-center mt-12 animate-on-scroll">
                 <a 
                   href="/register" 
-                  className="inline-block px-10 py-4 bg-[#F3B939] hover:bg-amber-500 text-[#0c2d05] font-bold rounded-full transition-all duration-300 text-xl shadow-lg hover:shadow-amber-400/30 hover:scale-105"
+                  className="inline-block px-10 py-4 bg-[#F3B939] hover:bg-amber-500 text-[#0A1508] font-bold rounded-full transition-all duration-300 text-xl shadow-lg hover:shadow-amber-400/30 hover:scale-105"
                 >
                   Register Now
                 </a>
@@ -113,7 +117,7 @@ export default function FeaturedHighlights() {
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a2304]/90 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1508]/90 to-transparent"></div>
           </div>
 
           {/* Right column - Text */}
@@ -128,11 +132,11 @@ export default function FeaturedHighlights() {
             </div>
 
             <div className="grid grid-cols-2 gap-8 animate-on-scroll">
-              <div className="bg-[#0c2d05]/50 backdrop-blur-sm rounded-xl p-8 text-center transform transition-transform duration-500 hover:scale-105 hover:shadow-lg hover:shadow-amber-400/10">
+              <div className="bg-[#0A1508]/60 backdrop-blur-sm rounded-xl p-8 text-center transform transition-transform duration-500 hover:scale-105 hover:shadow-lg hover:shadow-amber-400/10">
                 <p className="text-amber-400 text-5xl font-bold mb-3">10+</p>
                 <p className="text-white text-lg">Years of Experience</p>
               </div>
-              <div className="bg-[#0c2d05]/50 backdrop-blur-sm rounded-xl p-8 text-center transform transition-transform duration-500 hover:scale-105 hover:shadow-lg hover:shadow-amber-400/10">
+              <div className="bg-[#0A1508]/60 backdrop-blur-sm rounded-xl p-8 text-center transform transition-transform duration-500 hover:scale-105 hover:shadow-lg hover:shadow-amber-400/10">
                 <p className="text-amber-400 text-5xl font-bold mb-3">500+</p>
                 <p className="text-white text-lg">Happy Trekkers</p>
               </div>

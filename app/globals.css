@@ -193,3 +193,83 @@ section:not(#hero):hover::after {
   outline: 2px solid #d4a72c;
   outline-offset: 2px;
 }
+
+/* Smooth scrolling styles */
+html.has-scroll-smooth {
+  overflow: hidden;
+}
+
+html.has-scroll-dragging {
+  user-select: none;
+}
+
+.smooth-wrapper {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.smooth-content {
+  position: relative;
+  width: 100%;
+}
+
+/* Remove borders between sections */
+section {
+  position: relative;
+  overflow: hidden;
+  border: none !important;
+}
+
+/* Ensure transitions between sections are smooth */
+section + section {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Enhance container padding for better spacing */
+.container {
+  padding-left: max(1rem, 5%);
+  padding-right: max(1rem, 5%);
+}
+
+/* Add custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 35, 4, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(243, 185, 57, 0.4);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(243, 185, 57, 0.6);
+}
+
+/* Animate on scroll */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-on-scroll[style*="animationDelay"] {
+  transition-delay: var(--delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-on-scroll {
+    opacity: 1;
+    transform: translateY(0);
+    transition: none;
+  }
+}
+
+/* Remove section::after that creates the dividing lines */
+section::after {
+  display: none;
+}

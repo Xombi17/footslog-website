@@ -76,12 +76,12 @@ export default function EventOverview() {
         <div className="mb-20">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {timelineEvents.map((event, index) => (
-                <motion.div
-                  key={index}
+            {timelineEvents.map((event, index) => (
+              <motion.div
+                key={index}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.5 }}
+                viewport={{ once: false, amount: 0.5 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   className="animate-on-scroll"
                   style={{ animationDelay: `${index * 100}ms` }}
@@ -94,13 +94,13 @@ export default function EventOverview() {
                       <div>
                         <div className="text-sm font-semibold text-[#F3B939] uppercase tracking-wider">{event.date}</div>
                         <h3 className="text-xl font-bold text-white">{event.title}</h3>
-                      </div>
-                    </div>
-                    
+                  </div>
+                </div>
+
                     <p className="text-white/90 mt-3 leading-relaxed text-sm md:text-base">{event.description}</p>
                   </div>
-                </motion.div>
-              ))}
+              </motion.div>
+            ))}
             </div>
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function EventOverview() {
                 </a>
               </div>
             </div>
-            
+
             {/* Right Column - Google Map */}
             <div className="h-full">
               <div className="bg-[#0A1508] border-2 border-[#F3B939]/20 rounded-xl overflow-hidden shadow-2xl h-full flex flex-col">
@@ -208,7 +208,7 @@ export default function EventOverview() {
                     referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
                 </div>
-              </div>
+            </div>
             </div>
           </div>
         </motion.div>

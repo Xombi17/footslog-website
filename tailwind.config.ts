@@ -84,10 +84,20 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "subtle-sway": {
+          "0%, 100%": { transform: "translateX(0) scale(1.5)" },
+          "50%": { transform: "translateX(5px) scale(1.5)" }
+        },
+        "subtle-sway-reverse": {
+          "0%, 100%": { transform: "translateX(0) scale(1.5)" },
+          "50%": { transform: "translateX(-5px) scale(1.5)" }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "subtle-sway": "subtle-sway 8s ease-in-out infinite",
+        "subtle-sway-reverse": "subtle-sway-reverse 9s ease-in-out infinite"
       },
     },
   },

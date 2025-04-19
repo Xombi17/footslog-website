@@ -52,7 +52,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${poppins.variable} ${playfair.variable} font-sans`}>
+      <body className={`${inter.variable} ${poppins.variable} ${playfair.variable} font-sans relative`}>
+        {/* Left vine decoration */}
+        <div className="fixed left-0 top-0 h-full w-24 pointer-events-none z-50 overflow-hidden">
+          <div className="absolute left-0 top-0 h-full w-24 bg-[url('/images/left-vine.svg')] bg-contain bg-left opacity-30 transform scale-150 animate-subtle-sway"></div>
+        </div>
+        
+        {/* Right vine decoration */}
+        <div className="fixed right-0 top-0 h-full w-24 pointer-events-none z-50 overflow-hidden">
+          <div className="absolute right-0 top-0 h-full w-24 bg-[url('/images/right-vine.svg')] bg-contain bg-right opacity-30 transform scale-150 animate-subtle-sway-reverse"></div>
+        </div>
+        
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />

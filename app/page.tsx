@@ -51,13 +51,17 @@ export default function Home() {
               </div>
             </div>
 
-            <SectionTransition>
-              <FeaturedHighlights />
-            </SectionTransition>
+            <div id="about">
+              <SectionTransition>
+                <FeaturedHighlights />
+              </SectionTransition>
+            </div>
 
-            <SectionTransition>
-              <EventOverview />
-            </SectionTransition>
+            <div id="events">
+              <SectionTransition>
+                <EventOverview />
+              </SectionTransition>
+            </div>
 
             <SectionTransition>
               <TreksMap />
@@ -83,9 +87,11 @@ export default function Home() {
               <Testimonials />
             </SectionTransition>
 
-            <SectionTransition>
-              <RegistrationForm />
-            </SectionTransition>
+            <div id="register">
+              <SectionTransition>
+                <RegistrationForm />
+              </SectionTransition>
+            </div>
 
             <Footer />
           </div>

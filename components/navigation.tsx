@@ -3,13 +3,17 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
 import { MenuIcon, X, Compass, Home, InfoIcon, Calendar, Users } from "lucide-react"
 import Image from "next/image"
+import { isAnchorLink, handleNavigation } from "@/lib/navigation-utils"
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const navRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
+  const router = useRouter()
 
   // Toggle menu
   const toggleMenu = () => {
@@ -46,14 +50,40 @@ export default function Navigation() {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
+  
+  // Custom navigation handler
+  const handleLinkClick = (e: React.MouseEvent, href: string) => {
+    // Only handle the event for local in-page links
+    if (isAnchorLink(href) || (pathname === '/' && href.includes('#'))) {
+      e.preventDefault()
+      handleNavigation(href, router)
+    }
+  }
 
   // Navigation links with icons
   const links = [
     { href: "/", label: "Home", icon: <Home className="w-5 h-5" /> },
+    { href: "/about", label: "About", icon: <InfoIcon className="w-5 h-5" /> },
+    { href: "/events", label: "Events", icon: <Calendar className="w-5 h-5" /> },
+    { href: "/register", label: "Register", icon: <Users className="w-5 h-5" /> },
+  ]
+  
+  // Home page specific links for smooth scrolling
+  const homeLinks = pathname === '/' ? [
     { href: "#about", label: "About", icon: <InfoIcon className="w-5 h-5" /> },
     { href: "#events", label: "Events", icon: <Calendar className="w-5 h-5" /> },
     { href: "#register", label: "Register", icon: <Users className="w-5 h-5" /> },
-  ]
+  ] : [];
+  
+  // Combine links - show internal anchor links only when on home page
+  const navLinks = pathname === '/' ? [links[0], ...homeLinks] : links;
+  
+  // Function to check if link is active
+  const isActive = (path: string) => {
+    if (path === '/' && pathname === '/') return true
+    if (path !== '/' && !path.startsWith('#') && pathname.startsWith(path)) return true
+    return false
+  }
 
   return (
     <motion.header 
@@ -99,7 +129,7 @@ export default function Navigation() {
                   <div className="absolute top-1 left-1/2 w-1 h-1 bg-[#F3B939] rounded-full transform -translate-x-1/2" />
                 </motion.div>
               </div>
-              <span className="font-display font-bold text-[#F3B939] text-2xl tracking-wide hidden md:block">
+              <span className="font-display treasure-heading font-bold text-[#F3B939] text-2xl tracking-wide hidden md:block">
                 FOOTSLOG
               </span>
             </Link>
@@ -107,17 +137,28 @@ export default function Navigation() {
 
           {/* Desktop Navigation - truly centered */}
           <div className="hidden md:flex space-x-12 items-center">
-            {links.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="group relative flex flex-col items-center text-[#E5E1D6] hover:text-[#F3B939] transition-colors duration-300"
+                onClick={(e) => handleLinkClick(e, link.href)}
+                className={`group relative flex flex-col items-center transition-colors duration-300 ${
+                  isActive(link.href) 
+                    ? "text-[#F3B939]" 
+                    : "text-[#E5E1D6] hover:text-[#F3B939]"
+                }`}
               >
                 <span className="flex items-center justify-center font-medium">
                   <span className="mr-2">{link.icon}</span>
                   {link.label}
                 </span>
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#F3B939] group-hover:w-full transition-all duration-300" />
+                <span 
+                  className={`absolute bottom-0 left-0 h-0.5 bg-[#F3B939] transition-all duration-300 ${
+                    isActive(link.href) 
+                      ? "w-full" 
+                      : "w-0 group-hover:w-full"
+                  }`} 
+                />
               </Link>
             ))}
           </div>
@@ -150,12 +191,19 @@ export default function Navigation() {
             transition={{ duration: 0.3 }}
           >
             <div className="flex flex-col items-center py-4 space-y-4">
-              {links.map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="flex items-center py-2 px-4 text-[#E5E1D6] hover:text-[#F3B939] hover:bg-[#243420]/50 w-full justify-center transition-colors duration-300 rounded-lg"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={(e) => {
+                    handleLinkClick(e, link.href)
+                    setIsMenuOpen(false)
+                  }}
+                  className={`flex items-center py-2 px-4 w-full justify-center transition-colors duration-300 rounded-lg ${
+                    isActive(link.href)
+                      ? "text-[#F3B939] bg-[#243420]/80"
+                      : "text-[#E5E1D6] hover:text-[#F3B939] hover:bg-[#243420]/50"
+                  }`}
                 >
                   <span className="mr-3">{link.icon}</span>
                   {link.label}

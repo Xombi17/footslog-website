@@ -62,7 +62,7 @@ export default function Preloader() {
             {titleChars.map((char, i) => (
               <motion.span
                 key={i}
-                className="inline-block font-display text-7xl md:text-9xl font-bold tracking-wider text-[#F3B939]"
+                className="inline-block font-display treasure-heading text-7xl md:text-9xl font-bold tracking-wider text-[#F3B939] opacity-0"
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ 
                   y: 0, 

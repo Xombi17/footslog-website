@@ -234,81 +234,6 @@ export default function HeroSection() {
           />
         )}
 
-        {/* Jungle Decorations */}
-        <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
-          {/* Top left corner plant */}
-          <div
-            className="parallax-element absolute top-0 left-0 w-[30vw] max-w-[300px] opacity-0"
-            data-speed="0.8"
-            data-direction="left"
-          >
-            <Image
-              src="/images/jungle-corner-left.png"
-              alt="Jungle decoration"
-              width={300}
-              height={400}
-              className="object-contain"
-            />
-          </div>
-
-          {/* Top right corner plant */}
-          <div
-            className="parallax-element absolute top-0 right-0 w-[30vw] max-w-[300px] opacity-0"
-            data-speed="0.8"
-            data-direction="right"
-          >
-            <Image
-              src="/images/jungle-corner-right.png"
-              alt="Jungle decoration"
-              width={300}
-              height={400}
-              className="object-contain"
-            />
-          </div>
-
-          {/* Left side plant */}
-          <div
-            className="parallax-element absolute left-0 top-1/4 h-[50vh] w-[15vw] max-w-[150px] opacity-0"
-            data-speed="1.1"
-            data-direction="left"
-          >
-            <Image
-              src="/images/palm-leaf-left.png"
-              alt="Palm leaf"
-              fill
-              className="object-contain object-left"
-            />
-          </div>
-
-          {/* Right side plant */}
-          <div
-            className="parallax-element absolute right-0 top-1/4 h-[50vh] w-[15vw] max-w-[150px] opacity-0"
-            data-speed="1.1"
-            data-direction="right"
-          >
-            <Image
-              src="/images/palm-leaf-right.png"
-              alt="Palm leaf"
-              fill
-              className="object-contain object-right"
-            />
-          </div>
-          
-          {/* Bottom decorative elements */}
-          <div
-            className="parallax-element absolute bottom-0 left-0 right-0 h-[20vh] max-h-[150px] opacity-0"
-            data-speed="1.05"
-            data-direction="up"
-          >
-            <Image
-              src="/images/jungle-grass.png"
-              alt="Jungle grass"
-              fill
-              className="object-cover object-bottom"
-            />
-          </div>
-        </div>
-
         {/* Main Content - Positioned to match preloader */}
         <div className="relative z-30 flex w-full flex-col items-center justify-center px-6 text-center">
           {/* FOOTSLOG Title with letter animation similar to preloader */}
@@ -316,7 +241,7 @@ export default function HeroSection() {
             {titleChars.map((char, i) => (
               <span
                 key={i}
-                className={`hero-title-char-${i} inline-block font-display text-7xl md:text-9xl font-bold tracking-wider text-[#F3B939] opacity-0`}
+                className={`hero-title-char-${i} inline-block font-display treasure-heading text-7xl md:text-9xl font-bold tracking-wider text-[#F3B939] opacity-0`}
                 style={{ 
                   display: 'inline-block',
                   textShadow: '0 0 20px rgba(243, 185, 57, 0.6)' 

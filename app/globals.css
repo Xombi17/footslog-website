@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Font - Pieces of Eight */
+@font-face {
+  font-family: 'Pieces of Eight';
+  src: url('/fonts/Pieces of Eight.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -155,7 +164,16 @@ section:not(#hero):hover::after {
 }
 
 .font-display {
-  font-family: var(--font-playfair), serif;
+  font-family: 'Pieces of Eight', var(--font-playfair), serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Treasure heading style for important elements */
+.treasure-heading {
+  font-family: 'Pieces of Eight', serif;
+  letter-spacing: 0.075em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Text highlight */

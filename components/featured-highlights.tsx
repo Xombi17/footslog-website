@@ -98,7 +98,7 @@ export default function FeaturedHighlights() {
       </div>
 
       {/* Journey Begins Section */}
-      <div className="container relative z-10 mx-auto px-4 py-20">
+      <div id="about" className="container relative z-10 mx-auto px-4 py-20 scroll-mt-32">
         <div className="mb-16 text-center animate-on-scroll">
           <h2 className="font-display text-5xl md:text-6xl font-bold text-[#F3B939] mb-6">
             THE JOURNEY BEGINS

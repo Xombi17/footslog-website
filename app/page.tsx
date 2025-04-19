@@ -3,7 +3,6 @@ import Preloader from "@/components/preloader"
 import Navigation from "@/components/navigation"
 import HeroSection from "@/components/hero-section"
 import EventOverview from "@/components/event-overview"
-import ScheduleDetails from "@/components/schedule-details"
 import RegistrationForm from "@/components/registration-form"
 import Gallery from "@/components/gallery"
 import Testimonials from "@/components/testimonials"
@@ -27,18 +26,17 @@ export default function Home() {
 
           <SmoothScroll>
             <div className="relative">
-              <HeroSection />
-              
-              <div id="about">
-                <FeaturedHighlights />
+              <div id="/">
+                <HeroSection />
               </div>
+              
+              <FeaturedHighlights />
 
               <div id="events">
                 <EventOverview />
               </div>
 
               <TreksMap />
-              <ScheduleDetails />
               <TrekEquipment />
               <Gallery />
               <AchievementsStats />

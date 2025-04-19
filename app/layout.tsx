@@ -63,6 +63,23 @@ export default function RootLayout({
           <div className="absolute right-0 top-0 h-full w-24 bg-[url('/images/right-vine.svg')] bg-contain bg-right opacity-30 transform scale-150 animate-subtle-sway-reverse"></div>
         </div>
         
+        {/* Random decorative elements throughout the page */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none z-10">
+          {/* Paw prints pattern clusters */}
+          <div className="absolute left-[10%] top-[15%] h-64 w-64 bg-[url('/images/paw-prints.svg')] bg-contain bg-no-repeat opacity-10 rotate-[15deg]"></div>
+          <div className="absolute right-[20%] top-[25%] h-48 w-48 bg-[url('/images/paw-prints.svg')] bg-contain bg-no-repeat opacity-10 -rotate-[10deg]"></div>
+          <div className="absolute left-[25%] bottom-[30%] h-56 w-56 bg-[url('/images/paw-prints.svg')] bg-contain bg-no-repeat opacity-10 rotate-[45deg]"></div>
+          <div className="absolute right-[15%] bottom-[20%] h-72 w-72 bg-[url('/images/paw-prints.svg')] bg-contain bg-no-repeat opacity-10 -rotate-[20deg]"></div>
+          
+          {/* Leaf patterns */}
+          <div className="absolute left-[45%] top-[55%] h-48 w-48 opacity-8">
+            <div className="w-full h-full bg-[url('/images/jungle-vines-left.svg')] bg-contain bg-no-repeat transform scale-75 rotate-[30deg]"></div>
+          </div>
+          <div className="absolute right-[5%] top-[65%] h-40 w-40 opacity-8">
+            <div className="w-full h-full bg-[url('/images/jungle-vines-right.svg')] bg-contain bg-no-repeat transform scale-75 -rotate-[15deg]"></div>
+          </div>
+        </div>
+        
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />

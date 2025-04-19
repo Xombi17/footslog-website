@@ -18,7 +18,7 @@ const faqs: FAQItem[] = [
     character: "Mowgli",
     question: "What is the difficulty level of the trek?",
     answer: "Our trek is designed for beginners and intermediate level trekkers. With a moderate difficulty level, it offers challenges while remaining accessible to those with basic fitness levels.",
-    image: "/images/mowgli.png",
+    image: "/images/mowgly-hanging.png",
     color: "from-[#1A2614]/90 to-[#0F1A0A]/95",
   },
   {
@@ -46,7 +46,7 @@ const faqs: FAQItem[] = [
     character: "King Louie",
     question: "What happens in case of bad weather?",
     answer: "Safety is our priority. In case of severe weather, we may modify or postpone the trek. Our guides constantly monitor conditions and will make decisions accordingly. You'll be informed of any changes as early as possible.",
-    image: "/images/king-louie.png",
+    image: "/images/king.png",
     color: "from-[#1A2614]/90 to-[#0F1A0A]/95",
   },
 ];
@@ -62,29 +62,23 @@ export default function JungleBookFAQ() {
 
   return (
     <div ref={containerRef} className="py-24 relative overflow-hidden bg-[#0F1A0A]" id="faq">
-      {/* Jungle vines decoration */}
-      <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-        <div className="absolute top-0 left-0 w-28 h-full bg-[url('/images/left-vine.svg')] bg-contain bg-left opacity-50"></div>
-        <div className="absolute top-0 right-0 w-28 h-full bg-[url('/images/right-vine.svg')] bg-contain bg-right opacity-50"></div>
-      </div>
-      
       {/* Character decorations that scroll with the page */}
-      <div className="absolute -right-5 top-20 w-48 h-48 opacity-25">
+      <div className="absolute -left-50 top-20 w-48 h-48 opacity-85">
         <Image
           src="/images/sherkhan.png"
           alt="Shere Khan"
           width={200}
           height={200}
-          className="object-contain rotate-12"
+          className="object-contain rotate-12 scale-x-[-1]"
           style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>
       
       {/* Bottom character that scrolls with page */}
-      <div className="absolute -left-5 bottom-20 w-36 h-36 opacity-25">
+      <div className="absolute -left-70 bottom-20 w-36 h-36 opacity-75">
         <Image
-          src="/images/mowgly-hanging.png"
-          alt="Mowgli"
+          src="/images/baloo.png"
+          alt="Baloo"
           width={160}
           height={160}
           className="object-contain -rotate-12"
@@ -93,13 +87,13 @@ export default function JungleBookFAQ() {
       </div>
       
       {/* Additional Mowgli image */}
-      <div className="absolute top-1/2 right-10 w-28 h-28 opacity-15">
+      <div className="absolute top-1/2 right-10 w-28 h-28 opacity-75">
         <Image
-          src="/images/mowgly-hanging.png"
-          alt="Mowgli"
-          width={110}
-          height={110}
-          className="object-contain rotate-30"
+          src="/images/kaa.png"
+          alt="Kaa"
+          width={200}
+          height={200}
+          className="object-contain rotate-30 scale-x-[-1]"
           style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>

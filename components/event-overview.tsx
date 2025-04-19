@@ -89,10 +89,10 @@ export default function EventOverview() {
       </div>
 
       {/* Character decorations that scroll with page */}
-      <div className="absolute top-20 right-0 w-48 h-48 opacity-20 z-0">
+      <div className="absolute top-20 right-0 w-48 h-48 opacity-100 z-0">
         <Image
-          src="/images/mowgly-hanging.png"
-          alt="Mowgli"
+          src="/images/bagheera.png"
+          alt="Bagheera"
           width={180}
           height={180}
           className="object-contain"
@@ -100,10 +100,10 @@ export default function EventOverview() {
         />
       </div>
       
-      <div className="absolute bottom-40 left-10 w-36 h-36 opacity-20 z-0">
+      <div className="absolute bottom-40 left-10 w-36 h-36 opacity-80 z-0">
         <Image
-          src="/images/sherkhan.png"
-          alt="Shere Khan"
+          src="/images/kaa.png"
+          alt="Kaa"
           width={150}
           height={150}
           className="object-contain"
@@ -112,10 +112,10 @@ export default function EventOverview() {
       </div>
       
       {/* Additional Mowgli images in different sizes */}
-      <div className="absolute top-40 left-10 w-28 h-28 opacity-15 z-0">
+      <div className="absolute top-40 left-10 w-28 h-28 opacity-80 z-0">
         <Image
-          src="/images/mowgly-hanging.png"
-          alt="Mowgli"
+          src="/images/baloo.png"
+          alt="Baloo"
           width={120}
           height={120}
           className="object-contain rotate-12"
@@ -123,13 +123,13 @@ export default function EventOverview() {
         />
       </div>
       
-      <div className="absolute bottom-20 right-20 w-24 h-24 opacity-15 z-0">
+      <div className="absolute bottom-20 right-20 w-24 h-24 opacity-70 z-0">
         <Image
           src="/images/mowgly-hanging.png"
           alt="Mowgli"
           width={100}
           height={100}
-          className="object-contain -rotate-6"
+          className="object-contain -rotate-6 scale-x-[-1]"
           style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>

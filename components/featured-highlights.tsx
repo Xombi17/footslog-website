@@ -198,7 +198,7 @@ export default function FeaturedHighlights() {
       </div>
       
       {/* Mowgli character decorations */}
-      <div className="absolute top-40 left-10 w-32 h-32 opacity-15 z-0">
+      <div className="absolute top-40 left-10 w-32 h-32 opacity-70 z-0">
         <Image
           src="/images/mowgly-hanging.png"
           alt="Mowgli"
@@ -209,13 +209,13 @@ export default function FeaturedHighlights() {
         />
       </div>
       
-      <div className="absolute top-80 right-5 w-24 h-24 opacity-15 z-0">
+      <div className="absolute top-80 right-5 w-28 h-28 opacity-80 z-0">
         <Image
-          src="/images/mowgly-hanging.png"
+          src="/images/king.png"
           alt="Mowgli"
-          width={100}
-          height={100}
-          className="object-contain -rotate-6"
+          width={120}
+          height={120}
+          className="object-contain -rotate-6 scale-x-[-1]"
           style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>

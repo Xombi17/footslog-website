@@ -94,7 +94,7 @@ export default function Testimonials() {
       <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-r from-[#0F1A0A] via-[#4A6D33]/20 to-[#0F1A0A] transform -skew-y-2" />
       
       {/* Jungle Book Character - Bagheera */}
-      <div className="absolute top-40 left-0 w-40 h-40 opacity-20">
+      <div className="absolute top-40 left-0 w-40 h-40 opacity-70">
         <Image
           src="/images/bagheera.png"
           alt="Bagheera"
@@ -106,13 +106,13 @@ export default function Testimonials() {
       </div>
       
       {/* Jungle Book Character - King Louie */}
-      <div className="absolute bottom-20 right-0 w-44 h-44 opacity-20">
+      <div className="absolute bottom-20 right-0 w-44 h-44 opacity-80">
         <Image
-          src="/images/king louie.jpg"
+          src="/images/king.png"
           alt="King Louie"
           width={180}
           height={180}
-          className="object-contain"
+          className="object-contain scale-x-[-1]"
           style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>

@@ -72,10 +72,10 @@ export default function TreksMap() {
       </div>
       
       {/* Mowgli character decorations */}
-      <div className="absolute top-20 right-10 w-36 h-36 opacity-15 z-0">
+      <div className="absolute top-20 right-10 w-36 h-36 opacity-75 z-0">
         <Image
-          src="/images/mowgly-hanging.png"
-          alt="Mowgli"
+          src="/images/bagheera.png"
+          alt="Bagheera"
           width={140}
           height={140}
           className="object-contain rotate-6"
@@ -83,10 +83,10 @@ export default function TreksMap() {
         />
       </div>
       
-      <div className="absolute top-60 left-5 w-28 h-28 opacity-15 z-0">
+      <div className="absolute top-60 left-5 w-28 h-28 opacity-75 z-0">
         <Image
-          src="/images/mowgly-hanging.png"
-          alt="Mowgli"
+          src="/images/king.png"
+          alt="King Louie"
           width={110}
           height={110}
           className="object-contain -rotate-12"
@@ -94,13 +94,13 @@ export default function TreksMap() {
         />
       </div>
       
-      <div className="absolute bottom-60 right-10 w-24 h-24 opacity-15 z-0">
+      <div className="absolute bottom-60 right-10 w-24 h-24 opacity-65 z-0">
         <Image
           src="/images/mowgly-hanging.png"
           alt="Mowgli"
           width={90}
           height={90}
-          className="object-contain rotate-30"
+          className="object-contain rotate-30 scale-x-[-1]"
           style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>

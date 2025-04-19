@@ -93,6 +93,28 @@ export default function Testimonials() {
       {/* Diagonal decorative element */}
       <div className="absolute top-0 left-0 w-full h-10 bg-gradient-to-r from-[#0F1A0A] via-[#4A6D33]/20 to-[#0F1A0A] transform -skew-y-2" />
       
+      {/* Jungle Book Character - Bagheera */}
+      <div className="absolute top-40 left-0 w-40 h-40 opacity-20">
+        <Image
+          src="/images/bagheera.png"
+          alt="Bagheera"
+          width={160}
+          height={160}
+          className="object-contain"
+        />
+      </div>
+      
+      {/* Jungle Book Character - King Louie */}
+      <div className="absolute bottom-20 right-0 w-44 h-44 opacity-20">
+        <Image
+          src="/images/king louie.jpg"
+          alt="King Louie"
+          width={180}
+          height={180}
+          className="object-contain rounded-full"
+        />
+      </div>
+      
       {/* Background elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-24 h-24 rounded-full bg-[#D4A72C]/30" />
@@ -107,10 +129,10 @@ export default function Testimonials() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#D4A72C] mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#D4A72C] mb-4 font-display">
             Trekker Testimonials
           </h2>
-          <p className="text-[#E5E1D6]/70 max-w-2xl mx-auto">
+          <p className="text-[#E5E1D6]/70 max-w-2xl mx-auto font-sans">
             Hear what past participants have to say about their Footslog experience
           </p>
         </motion.div>
@@ -143,7 +165,7 @@ export default function Testimonials() {
                   <div className="text-[#D4A72C] mb-4">
                     <Quote className="h-8 w-8 opacity-70" />
                   </div>
-                  <p className="text-[#E5E1D6] text-lg italic mb-6">
+                  <p className="text-[#E5E1D6] text-lg italic mb-6 font-sans">
                     "{testimonials[current].quote}"
                   </p>
                   
@@ -156,7 +178,7 @@ export default function Testimonials() {
                       ))}
                     </div>
                     <h3 className="text-[#D4A72C] font-bold text-xl">{testimonials[current].name}</h3>
-                    <p className="text-[#E5E1D6]/70">{testimonials[current].role}</p>
+                    <p className="text-[#E5E1D6]/70 font-sans">{testimonials[current].role}</p>
                   </div>
                 </div>
               </div>

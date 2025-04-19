@@ -69,15 +69,37 @@ export default function HeroSection() {
       defaults: { ease: "power2.out" }
     })
     
+    // Fade in the glow effect
+    tl.to(".hero-glow", { opacity: 1, duration: 1 }, 0)
+    
     // Add staggered animations for title chars - alternating left/right entry
     titleChars.forEach((_, i) => {
       const direction = i % 2 === 0 ? -100 : 100
       
       tl.fromTo(`.hero-title-char-${i}`, 
-        { x: direction, y: 0, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.8 },
+        { 
+          x: direction, 
+          y: 0, 
+          opacity: 0,
+          textShadow: "0 0 0px rgba(243, 185, 57, 0)"
+        },
+        { 
+          x: 0, 
+          opacity: 1, 
+          duration: 0.8,
+          textShadow: "0 0 20px rgba(243, 185, 57, 0.6)"
+        },
         0.1 * i
       )
+      
+      // Add pulsing text shadow animation after the character appears
+      tl.to(`.hero-title-char-${i}`, {
+        textShadow: "0 0 30px rgba(243, 185, 57, 0.8)",
+        repeat: -1,
+        yoyo: true,
+        duration: 1.5 + (i * 0.1),
+        ease: "sine.inOut"
+      }, 0.8 + (0.1 * i))
     })
     
     // Subtitle glides in from the right
@@ -215,16 +237,16 @@ export default function HeroSection() {
       >
         {/* Jungle Book Background Image */}
         <div className="absolute inset-0 z-0">
-          <Image 
-            src="/images/jungle-book-bg.png" 
+          <Image
+            src="/images/jungle-book-bg.png"
             alt="Jungle background" 
-            fill 
+            fill
             priority
             className="object-cover opacity-60"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#0F1A0A]/40 via-[#0F1A0A]/70 to-[#0F1A0A] z-10"></div>
         </div>
-        
+
         {/* Bottom Gradient for Smooth Transition */}
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0F1A0A] to-transparent z-20"></div>
         
@@ -240,14 +262,20 @@ export default function HeroSection() {
         {/* Main Content - Positioned to match preloader */}
         <div className="relative z-30 flex w-full flex-col items-center justify-center px-6 text-center">
           {/* FOOTSLOG Title with letter animation similar to preloader */}
-          <div className="flex items-center justify-center overflow-hidden mb-6">
+          <div className="flex items-center justify-center mb-6 relative">
+            {/* Glow effect behind text */}
+            <motion.div 
+              className="absolute w-[130%] h-[150%] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#F3B939]/5 blur-[60px] rounded-[100%] opacity-0 hero-glow"
+              animate={{ opacity: [0.4, 0.7, 0.4], scale: [0.9, 1.1, 0.9] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            
             {titleChars.map((char, i) => (
               <span
                 key={i}
-                className={`hero-title-char-${i} inline-block font-display treasure-heading text-7xl md:text-9xl font-bold tracking-wider text-[#F3B939] opacity-0`}
+                className={`hero-title-char-${i} inline-block font-display text-7xl md:text-9xl font-bold tracking-wider text-[#F3B939] opacity-0`}
                 style={{ 
-                  display: 'inline-block',
-                  textShadow: '0 0 20px rgba(243, 185, 57, 0.6)' 
+                  display: 'inline-block'
                 }}
               >
                 {char}

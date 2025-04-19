@@ -88,6 +88,27 @@ export default function EventOverview() {
         <div className="absolute -right-24 bottom-1/3 w-72 h-72 rounded-full bg-amber-400/5 blur-3xl"></div>
       </div>
 
+      {/* Character decorations that scroll with page */}
+      <div className="absolute top-20 right-0 w-48 h-48 opacity-20 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={180}
+          height={180}
+          className="object-contain"
+        />
+      </div>
+      
+      <div className="absolute bottom-40 left-10 w-36 h-36 opacity-20 z-0">
+        <Image
+          src="/images/sherkhan.png"
+          alt="Shere Khan"
+          width={150}
+          height={150}
+          className="object-contain"
+        />
+      </div>
+
       <div className="container relative z-10 mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -96,7 +117,7 @@ export default function EventOverview() {
           className="mb-16 text-center"
         >
           <h2 className="font-display text-4xl font-bold text-[#F3B939] md:text-5xl mb-6">The Adventure Awaits</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-[#E5E1D6]">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-[#E5E1D6] font-sans">
             <span className="italic">
               "The strength of the pack is the wolf, and the strength of the wolf is the pack."
             </span>{" "}
@@ -129,7 +150,7 @@ export default function EventOverview() {
                   </div>
                 </div>
 
-                    <p className="text-white/90 mt-3 leading-relaxed text-sm md:text-base">{event.description}</p>
+                    <p className="text-white/90 mt-3 leading-relaxed text-sm md:text-base font-sans">{event.description}</p>
                   </div>
               </motion.div>
             ))}
@@ -149,7 +170,7 @@ export default function EventOverview() {
           <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-amber-400/5 blur-3xl"></div>
           <div className="absolute -left-16 -top-16 w-48 h-48 rounded-full bg-amber-400/5 blur-3xl"></div>
 
-          <h3 className="mb-6 text-3xl md:text-4xl font-bold text-[#F3B939] relative z-10 text-center">Trek Details</h3>
+          <h3 className="mb-6 text-3xl md:text-4xl font-bold text-[#F3B939] relative z-10 text-center font-display">Trek Details</h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
             {/* Left Column - Trek Details */}
@@ -162,9 +183,9 @@ export default function EventOverview() {
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold text-white">₹850</span>
-                    <span className="text-white/80 text-sm">per person</span>
+                    <span className="text-white/80 text-sm font-sans">per person</span>
                   </div>
-                  <p className="text-white/80 mt-2">Includes transportation, equipment, guides, and basic refreshments</p>
+                  <p className="text-white/80 mt-2 font-sans">Includes transportation, equipment, guides, and basic refreshments</p>
                 </div>
                 
                 <div className="mb-8">
@@ -172,7 +193,7 @@ export default function EventOverview() {
                     <Info className="h-6 w-6 text-[#F3B939]" />
                     <h4 className="font-bold text-[#F3B939] text-xl">What's Included</h4>
                   </div>
-                  <ul className="text-white space-y-3">
+                  <ul className="text-white space-y-3 font-sans">
                     <li className="flex items-center gap-3">
                       <span className="h-2 w-2 rounded-full bg-[#F3B939]"></span>
                       <span>Professional trek guides</span>
@@ -196,7 +217,7 @@ export default function EventOverview() {
                   <div className="bg-[#0A1508] border-2 border-[#F3B939]/20 rounded-lg p-4 text-center shadow-2xl relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-b from-[#F3B939]/5 to-transparent"></div>
                     <h4 className="font-bold text-[#F3B939] relative z-10">Difficulty</h4>
-                    <p className="text-white relative z-10">Moderate</p>
+                    <p className="text-white relative z-10 font-sans">Moderate</p>
                   </div>
                   <div className="bg-[#0A1508] border-2 border-[#F3B939]/20 rounded-lg p-4 text-center shadow-2xl relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-b from-[#F3B939]/5 to-transparent"></div>

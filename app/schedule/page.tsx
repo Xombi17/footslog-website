@@ -121,7 +121,7 @@ export default function SchedulePage() {
                   <div className="bg-white rounded-lg p-4 flex items-center space-x-8">
                     <div className="relative h-16 w-16 md:h-20 md:w-20">
                       <Image 
-                        src="/images/crce-logo.png" 
+                        src="/images/rotaractlogo.png" 
                         alt="CRCE Logo" 
                         fill
                         className="rounded-full object-contain"
@@ -129,7 +129,7 @@ export default function SchedulePage() {
                     </div>
                     <div className="relative h-12 w-48 md:h-16 md:w-64">
                       <Image 
-                        src="/images/fr-crce-logo.png" 
+                        src="/images/rotaractlogo.png" 
                         alt="FR CRCE Logo" 
                         fill
                         className="object-contain"

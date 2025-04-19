@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { motion, useInView } from "framer-motion"
+import React, { useState, useRef } from "react"
+import { motion, AnimatePresence, useInView } from "framer-motion"
 import { ChevronDown, Quote } from "lucide-react"
 import Image from "next/image"
 
@@ -10,83 +10,84 @@ type FAQItem = {
   question: string;
   answer: string;
   image: string;
+  color: string;
 };
 
 const faqs: FAQItem[] = [
   {
     character: "Mowgli",
-    question: "What should I expect during the Footslog trek?",
-    answer: "Our trek will take you through the heart of nature, with breathtaking views, challenging terrain, and unforgettable experiences. We'll explore valleys, forests, and streams while creating memories that will last a lifetime.",
-    image: "/images/jungle-book-bg.png",
+    question: "What is the difficulty level of the trek?",
+    answer: "Our trek is designed for beginners and intermediate level trekkers. With a moderate difficulty level, it offers challenges while remaining accessible to those with basic fitness levels.",
+    image: "/images/mowgli.png",
+    color: "from-amber-700/80 to-amber-900/80",
   },
   {
     character: "Bagheera",
-    question: "How difficult is the trek? Do I need prior experience?",
-    answer: "The trek is suitable for beginners with a basic fitness level. While prior trekking experience is helpful, it's not mandatory. We recommend daily walking practice for 2-3 weeks before the trek to build stamina. Our experienced guides will assist you throughout the journey.",
-    image: "/images/jungle-book-bg.png",
+    question: "What should I pack for the trek?",
+    answer: "Essential items include appropriate footwear, comfortable clothing, a backpack, water bottle, snacks, sunscreen, insect repellent, and a first aid kit. Check our equipment section for a detailed packing list.",
+    image: "/images/bagheera.png",
+    color: "from-slate-700/80 to-slate-900/80",
   },
   {
     character: "Baloo",
-    question: "What food and accommodation arrangements are made?",
-    answer: "We provide simple, nutritious meals throughout the trek. Breakfast, lunch, dinner, and evening snacks are included in your package. Accommodation will be in tents (2-3 people sharing), with sleeping bags and mats provided. It's a blend of adventure and comfort!",
-    image: "/images/jungle-book-bg.png",
+    question: "Is food provided during the trek?",
+    answer: "Yes, we provide nutritious meals during the trek. Our team prepares fresh, energizing food to keep you fueled throughout the adventure. We can accommodate dietary restrictions with advance notice.",
+    image: "/images/baloo.png",
+    color: "from-blue-700/80 to-blue-900/80",
   },
   {
     character: "Kaa",
-    question: "What safety measures are in place?",
-    answer: "Your safety is our priority. Our guides are trained in first aid and emergency response. We carry medical kits, maintain regular communication with base camps, and follow strict safety protocols. The trek routes are carefully selected and regularly assessed for safety.",
-    image: "/images/jungle-book-bg.png",
+    question: "Are there age restrictions for participants?",
+    answer: "Participants should be at least 12 years old. Those under 18 must be accompanied by an adult. There's no upper age limit, but we recommend consulting with your physician if you have health concerns.",
+    image: "/images/kaa.png",
+    color: "from-green-700/80 to-green-900/80",
   },
   {
     character: "King Louie",
-    question: "How do I book and what's the cancellation policy?",
-    answer: "You can book through our website with a 50% advance payment. The remaining amount should be paid before the trek date. For cancellations 30+ days before: 80% refund; 15-29 days: 50% refund; less than 15 days: no refund. We do offer to reschedule to another date subject to availability.",
-    image: "/images/jungle-book-bg.png",
+    question: "What happens in case of bad weather?",
+    answer: "Safety is our priority. In case of severe weather, we may modify or postpone the trek. Our guides constantly monitor conditions and will make decisions accordingly. You'll be informed of any changes as early as possible.",
+    image: "/images/king-louie.png",
+    color: "from-orange-700/80 to-orange-900/80",
   },
 ];
 
 export default function JungleBookFAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openItem, setOpenItem] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: false, amount: 0.3 });
 
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+  const toggleItem = (index: number) => {
+    setOpenItem(openItem === index ? null : index);
   };
 
   return (
-    <div ref={containerRef} className="py-20 relative overflow-hidden bg-[#0F1A0A]">
-      {/* Diagonal decorative element - matches testimonials */}
+    <div ref={containerRef} className="py-20 relative overflow-hidden bg-[#0F1A0A]" id="faq">
+      {/* Character decorations that scroll with the page */}
+      <div className="absolute -right-5 top-20 w-48 h-48 opacity-25">
+        <Image
+          src="/images/sherkhan.png"
+          alt="Shere Khan"
+          width={200}
+          height={200}
+          className="object-contain rotate-12"
+        />
+      </div>
+      
+      {/* Bottom character that scrolls with page */}
+      <div className="absolute -left-5 bottom-20 w-36 h-36 opacity-25">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={160}
+          height={160}
+          className="object-contain -rotate-12"
+        />
+      </div>
+      
+      {/* Diagonal decorative element */}
       <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-r from-[#0F1A0A] via-[#4A6D33]/20 to-[#0F1A0A] transform skew-y-2" />
       
-      {/* Background elements - similar to testimonials */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 right-10 w-24 h-24 rounded-full bg-[#D4A72C]/30" />
-        <div className="absolute bottom-40 left-20 w-32 h-32 rounded-full bg-[#4A6D33]/20" />
-        <div className="absolute top-1/2 right-1/3 w-16 h-16 rounded-full bg-[#D4A72C]/20" />
-      </div>
-      
-      {/* Jungle vines as subtle background elements */}
-      <div className="absolute right-0 top-20 h-80 w-20 opacity-10">
-        <Image
-          src="/images/jungle-vines-right.svg"
-          alt="Jungle vines"
-          width={100}
-          height={400}
-        />
-      </div>
-      
-      <div className="absolute left-0 bottom-20 h-80 w-20 opacity-10">
-        <Image
-          src="/images/jungle-vines-right.svg"
-          alt="Jungle vines"
-          width={100}
-          height={400}
-          className="rotate-180"
-        />
-      </div>
-      
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -97,7 +98,7 @@ export default function JungleBookFAQ() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
-            className="text-3xl md:text-4xl font-bold text-[#D4A72C] mb-4"
+            className="font-display text-3xl md:text-4xl font-bold text-[#D4A72C] mb-4"
           >
             QUESTIONS FROM THE JUNGLE
           </motion.h2>
@@ -106,7 +107,7 @@ export default function JungleBookFAQ() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-[#E5E1D6]/70 max-w-2xl mx-auto"
+            className="text-[#E5E1D6]/90 max-w-2xl mx-auto font-sans text-lg"
           >
             Our jungle friends have some questions you might be wondering about too!
           </motion.p>
@@ -114,50 +115,63 @@ export default function JungleBookFAQ() {
 
         <div className="max-w-4xl mx-auto">
           {faqs.map((faq, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
               className="mb-6"
             >
               <div 
-                className="flex items-center p-5 cursor-pointer rounded-lg bg-[#243420] shadow-md"
-                onClick={() => toggleFAQ(index)}
+                className="relative overflow-hidden rounded-xl bg-black/30 border border-white/10 backdrop-blur-sm transition-all duration-300 hover:shadow-md hover:shadow-amber-900/20 group"
               >
-                <div className="relative w-12 h-12 mr-4 rounded-full overflow-hidden border-4 border-[#4A6D33]/50">
-                  <Image 
-                    src={faq.image} 
-                    alt={faq.character} 
-                    fill 
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-[#E5E1D6]">{faq.question}</h3>
-                  <p className="text-sm text-[#E5E1D6]/70">Asked by {faq.character}</p>
-                </div>
-                <ChevronDown 
-                  className={`text-[#D4A72C] transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`} 
-                  size={20}
-                />
-              </div>
-              
-              {openIndex === index && (
-                <motion.div 
-                  className="p-6 bg-[#243420]/80 rounded-b-lg border-t border-[#4A6D33]/30 mt-px"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
+                <button
+                  onClick={() => toggleItem(index)}
+                  className="flex items-center justify-between w-full px-6 py-5 text-left relative z-20 cursor-pointer"
+                  aria-expanded={openItem === index}
                 >
-                  <div className="text-[#D4A72C] mb-3">
-                    <Quote className="h-6 w-6 opacity-70" />
+                  <div className="flex items-center space-x-4">
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 flex-shrink-0 group-hover:border-[#F3B939]/50 transition-all duration-300">
+                      <Image
+                        src={faq.image}
+                        alt={faq.character}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div>
+                      <span className="block text-sm font-medium text-[#F3B939]">
+                        {faq.character} asks:
+                      </span>
+                      <h3 className="text-xl font-medium text-white group-hover:text-[#F3B939]/90 transition-colors duration-300">
+                        {faq.question}
+                      </h3>
+                    </div>
                   </div>
-                  <p className="text-[#E5E1D6]/90 leading-relaxed">{faq.answer}</p>
-                </motion.div>
-              )}
-            </motion.div>
+                  <ChevronDown
+                    className={`w-6 h-6 text-white/70 transition-transform duration-300 flex-shrink-0 ${
+                      openItem === index ? "rotate-180 text-[#F3B939]" : "rotate-0 group-hover:text-[#F3B939]/70"
+                    }`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {openItem === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative z-10"
+                    >
+                      <div 
+                        className={`px-6 pb-6 pt-2 text-white/90 bg-gradient-to-br ${faq.color} rounded-b-xl relative`}
+                      >
+                        <Quote className="absolute top-2 left-2 w-8 h-8 text-white/10 opacity-50" />
+                        <p className="relative z-10 pl-2">{faq.answer}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           ))}
         </div>
         
@@ -167,10 +181,10 @@ export default function JungleBookFAQ() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-10 text-center"
         >
-          <p className="text-[#E5E1D6]/70 mb-6">Don't see your question? Feel free to reach out!</p>
+          <p className="text-[#E5E1D6]/90 mb-6 font-sans">Don't see your question? Feel free to reach out!</p>
           <a 
             href="mailto:contact@footslog.com" 
-            className="inline-block px-8 py-3 rounded-full bg-[#243420] text-[#D4A72C] hover:bg-[#D4A72C] hover:text-[#0F1A0A] transition-colors"
+            className="inline-block px-8 py-3 rounded-full bg-[#243420] text-[#D4A72C] hover:bg-[#D4A72C] hover:text-[#0F1A0A] transition-colors font-sans font-bold text-base"
           >
             Contact Us
           </a>

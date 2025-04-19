@@ -11,9 +11,21 @@ import { isAnchorLink, handleNavigation } from "@/lib/navigation-utils"
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [preloaderFinished, setPreloaderFinished] = useState(false)
   const navRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const router = useRouter()
+
+  // Detect when preloader is finished
+  useEffect(() => {
+    // Preloader duration (2s) + fadeout duration (1s)
+    const preloaderDuration = 3000
+    const timer = setTimeout(() => {
+      setPreloaderFinished(true)
+    }, preloaderDuration)
+    
+    return () => clearTimeout(timer)
+  }, [])
 
   // Toggle menu
   const toggleMenu = () => {
@@ -85,19 +97,23 @@ export default function Navigation() {
     return false
   }
 
+  if (!preloaderFinished) {
+    return null; // Don't render anything until preloader is finished
+  }
+
   return (
     <motion.header
       ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? "bg-[#0F1A0A]/90 shadow-lg backdrop-blur-md py-2" : "py-4"
       }`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
       transition={{ 
         type: "spring", 
         damping: 20, 
         stiffness: 100,
-        delay: 0.2
+        delay: 0.3
       }}
     >
       <div className="container mx-auto px-4">
@@ -105,22 +121,25 @@ export default function Navigation() {
           {/* Logo */}
           <motion.div 
             className="flex items-center md:absolute md:left-4"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Link href="/" className="flex items-center">
               <div className="relative w-10 h-10 mr-3">
                 <Image 
-                  src="/images/compass-logo.svg" 
+                  src="/images/rotaractlogo.png" 
                   alt="Footslog Logo" 
                   width={40} 
                   height={40}
                   className={`transition-all duration-300 ${isScrolled ? "opacity-100" : "opacity-90"}`}
                 />
-              <motion.div
+                <motion.div
                   className="absolute inset-0"
                   animate={{ rotate: 360 }}
-                transition={{ 
+                  transition={{ 
                     duration: 15, 
                     ease: "linear",
                     repeat: Infinity 
@@ -128,45 +147,74 @@ export default function Navigation() {
                 >
                   <div className="absolute top-1 left-1/2 w-1 h-1 bg-[#F3B939] rounded-full transform -translate-x-1/2" />
                 </motion.div>
-                  </div>
-              <span className="font-display treasure-heading font-bold text-[#F3B939] text-2xl tracking-wide hidden md:block">
-                FOOTSLOG
-              </span>
+              </div>
+              <div className="relative">
+                <motion.span 
+                  className="font-display font-bold text-[#F3B939] text-2xl tracking-wide hidden md:block"
+                  animate={{ 
+                    textShadow: [
+                      "0 0 8px rgba(243, 185, 57, 0.3)",
+                      "0 0 12px rgba(243, 185, 57, 0.5)",
+                      "0 0 8px rgba(243, 185, 57, 0.3)"
+                    ] 
+                  }}
+                  transition={{
+                    textShadow: {
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }
+                  }}
+                >
+                  FOOTSLOG
+                </motion.span>
+              </div>
             </Link>
           </motion.div>
 
           {/* Desktop Navigation - truly centered */}
           <div className="hidden md:flex space-x-12 items-center">
-            {navLinks.map((link) => (
-              <Link
+            {navLinks.map((link, index) => (
+              <motion.div
                 key={link.label}
-                  href={link.href}
-                onClick={(e) => handleLinkClick(e, link.href)}
-                className={`group relative flex flex-col items-center transition-colors duration-300 ${
-                  isActive(link.href) 
-                    ? "text-[#F3B939]" 
-                    : "text-[#E5E1D6] hover:text-[#F3B939]"
-                }`}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.7 + (index * 0.1) }}
               >
-                <span className="flex items-center justify-center font-medium">
-                  <span className="mr-2">{link.icon}</span>
-                  {link.label}
-                </span>
-                <span 
-                  className={`absolute bottom-0 left-0 h-0.5 bg-[#F3B939] transition-all duration-300 ${
+                <Link
+                  href={link.href}
+                  onClick={(e) => handleLinkClick(e, link.href)}
+                  className={`group relative flex flex-col items-center transition-colors duration-300 ${
                     isActive(link.href) 
-                      ? "w-full" 
-                      : "w-0 group-hover:w-full"
-                  }`} 
-                />
+                      ? "text-[#F3B939]" 
+                      : "text-[#E5E1D6] hover:text-[#F3B939]"
+                  }`}
+                >
+                  <span className="flex items-center justify-center font-medium">
+                    <span className="mr-2">{link.icon}</span>
+                    {link.label}
+                  </span>
+                  <span 
+                    className={`absolute bottom-0 left-0 h-0.5 bg-[#F3B939] transition-all duration-300 ${
+                      isActive(link.href) 
+                        ? "w-full" 
+                        : "w-0 group-hover:w-full"
+                    }`} 
+                  />
                 </Link>
+              </motion.div>
             ))}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <motion.div 
+            className="md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
             <button
-            onClick={toggleMenu}
+              onClick={toggleMenu}
               className="text-[#E5E1D6] hover:text-[#F3B939] p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#F3B939]"
               aria-label="Toggle menu"
             >
@@ -176,14 +224,14 @@ export default function Navigation() {
                 <MenuIcon className="w-6 h-6" />
               )}
             </button>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Mobile menu */}
       <AnimatePresence>
         {isMenuOpen && (
-      <motion.div
+          <motion.div
             className="md:hidden absolute top-full left-0 right-0 bg-[#0F1A0A]/95 backdrop-blur-md"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -191,26 +239,32 @@ export default function Navigation() {
             transition={{ duration: 0.3 }}
           >
             <div className="flex flex-col items-center py-4 space-y-4">
-              {navLinks.map((link) => (
-                <Link
+              {navLinks.map((link, index) => (
+                <motion.div
                   key={link.label}
-                  href={link.href}
-                  onClick={(e) => {
-                    handleLinkClick(e, link.href)
-                    setIsMenuOpen(false)
-                  }}
-                  className={`flex items-center py-2 px-4 w-full justify-center transition-colors duration-300 rounded-lg ${
-                    isActive(link.href)
-                      ? "text-[#F3B939] bg-[#243420]/80"
-                      : "text-[#E5E1D6] hover:text-[#F3B939] hover:bg-[#243420]/50"
-                  }`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 * index }}
                 >
-                  <span className="mr-3">{link.icon}</span>
-                  {link.label}
-                </Link>
-            ))}
+                  <Link
+                    href={link.href}
+                    onClick={(e) => {
+                      handleLinkClick(e, link.href)
+                      setIsMenuOpen(false)
+                    }}
+                    className={`flex items-center py-2 px-4 w-full justify-center transition-colors duration-300 rounded-lg ${
+                      isActive(link.href)
+                        ? "text-[#F3B939] bg-[#243420]/80"
+                        : "text-[#E5E1D6] hover:text-[#F3B939] hover:bg-[#243420]/50"
+                    }`}
+                  >
+                    <span className="mr-3">{link.icon}</span>
+                    {link.label}
+                  </Link>
+                </motion.div>
+              ))}
             </div>
-      </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.header>

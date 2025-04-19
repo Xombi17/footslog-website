@@ -4,6 +4,7 @@ import { Inter, Poppins, Playfair_Display } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import Image from "next/image"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,13 +13,12 @@ const inter = Inter({
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
+  weight: ["400", "500", "600", "700"],
 })
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-playfair",
 })
 
@@ -27,7 +27,6 @@ export const metadata: Metadata = {
   description: "Join us for an unforgettable jungle adventure with Footslog, the annual trek by Rotaract Club FRCRCE. Experience the beauty of the Sahyadri Mountains in Western Ghats, Maharashtra.",
   keywords: ["trek", "hiking", "adventure", "Rotaract", "FRCRCE", "Footslog", "Sahyadri", "Western Ghats", "Maharashtra"],
   authors: [{ name: "Rotaract Club FRCRCE" }],
-  metadataBase: new URL("https://footslog-frcrce.vercel.app"),
   openGraph: {
     title: "Footslog - Annual Adventure Trek",
     description: "Join us for an unforgettable jungle adventure",
@@ -42,7 +41,6 @@ export const metadata: Metadata = {
     description: "Join us for an unforgettable jungle adventure",
     images: ["/images/jungle-book-bg.png"],
   },
-  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -52,6 +50,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </head>
       <body className={`${inter.variable} ${poppins.variable} ${playfair.variable} font-sans relative`}>
         {/* Left vine decoration */}
         <div className="fixed left-0 top-0 h-full w-24 pointer-events-none z-50 overflow-hidden">

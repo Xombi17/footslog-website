@@ -72,7 +72,25 @@ export default function Footer() {
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4A72C]/20 text-[#D4A72C]">
                 <span className="text-xl">🌿</span>
               </div>
-              <span className="font-display text-xl font-bold text-[#D4A72C]">FOOTSLOG</span>
+              <motion.span 
+                className="font-display text-xl font-bold text-[#D4A72C]"
+                animate={{ 
+                  textShadow: [
+                    "0 0 8px rgba(243, 185, 57, 0.3)",
+                    "0 0 12px rgba(243, 185, 57, 0.5)",
+                    "0 0 8px rgba(243, 185, 57, 0.3)"
+                  ] 
+                }}
+                transition={{
+                  textShadow: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }
+                }}
+              >
+                FOOTSLOG
+              </motion.span>
             </Link>
             <p className="mt-4 max-w-sm text-[#E5E1D6]/80">
               Join us for an unforgettable adventure through the breathtaking Sahyadri Mountains.

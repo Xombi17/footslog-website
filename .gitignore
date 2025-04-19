@@ -33,10 +33,4 @@ bun-debug.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo 
+next-env.d.ts 

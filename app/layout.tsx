@@ -24,7 +24,6 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: "Footslog - Rotaract Club FRCRCE's Annual Trek",
   description: "Join us for an unforgettable jungle adventure with Footslog, the annual trek by Rotaract Club FRCRCE. Experience the beauty of the Sahyadri Mountains in Western Ghats, Maharashtra.",
   keywords: ["trek", "hiking", "adventure", "Rotaract", "FRCRCE", "Footslog", "Sahyadri", "Western Ghats", "Maharashtra"],
@@ -32,18 +31,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Footslog - Annual Adventure Trek",
     description: "Join us for an unforgettable jungle adventure",
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-    siteName: "Footslog",
-    images: [
-      {
-        url: "/images/jungle-book-bg.png",
-        width: 1200,
-        height: 630,
-        alt: "Footslog Jungle Trek",
-      },
-    ],
+    images: ["/images/jungle-book-bg.png"],
     type: "website",
     locale: "en_US",
+    siteName: "Footslog",
   },
   twitter: {
     card: "summary_large_image",

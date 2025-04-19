@@ -14,69 +14,45 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useToast } from "@/hooks/use-toast"
 import confetti from 'canvas-confetti'
-import QRCode from 'react-qr-code'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-import { v4 as uuidv4 } from 'uuid'
-
-// Define the form schema type
-type FormValues = z.infer<typeof formSchema>
+import { QRCodeSVG } from 'react-qr-code'
 
 const formSchema = z.object({
-  fullName: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  age: z.string(),
-  gender: z.string(),
-  fitnessLevel: z.string(),
-  trekExperience: z.string(),
+  fullName: z.string().min(2, { message: "Full name is required." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
+  age: z.string().min(1, { message: "Age is required." }),
+  gender: z.string().min(1, { message: "Please select your gender." }),
+  fitnessLevel: z.string().min(1, { message: "Please select your fitness level." }),
+  trekExperience: z.string().min(1, { message: "Please select your trekking experience." }),
   emergencyContact: z.object({
-    name: z.string(),
-    phone: z.string(),
-    relation: z.string()
+    name: z.string().min(2, { message: "Emergency contact name is required." }),
+    phone: z.string().min(10, { message: "Please provide a valid emergency contact number." }),
+    relation: z.string().min(1, { message: "Please specify the relationship." }),
   }),
   medicalInfo: z.string().optional(),
-  height: z.string(),
-  weight: z.string(),
-  tShirtSize: z.string(),
+  height: z.string().optional(),
+  weight: z.string().optional(),
+  tShirtSize: z.string().min(1, { message: "Please select your t-shirt size." }),
   dietaryRestrictions: z.string().optional(),
   equipmentNeeds: z.string().optional(),
-  howHeard: z.string(),
+  howHeard: z.string().min(1, { message: "Please tell us how you heard about us." }),
   specialRequests: z.string().optional(),
-  termsAccepted: z.boolean()
+  termsAccepted: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms and conditions.",
+  }),
 })
 
-interface RegistrationData {
-  full_name: string;
-  email: string;
-  phone: string;
-  age: string;
-  gender: string;
-  fitnessLevel: string;
-  emergencyContact: string;
-  emergencyPhone: string;
-  equipmentNeeds: string[];
-  medicalConditions: string;
-  dietaryRestrictions: string;
-  trekExperience: string;
-}
-
 export default function RegistrationForm() {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [registrationData, setRegistrationData] = useState<z.infer<typeof formSchema> | null>(null)
   const [currentStep, setCurrentStep] = useState<'form' | 'payment' | 'ticket'>('form')
   const [paymentComplete, setPaymentComplete] = useState(false)
   const [ticketId, setTicketId] = useState("")
-  const [error, setError] = useState("")
   
   const sectionRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
   const { toast } = useToast()
-  const [showPayment, setShowPayment] = useState(false)
-  const [showTicket, setShowTicket] = useState(false)
-  const [ticketData, setTicketData] = useState<any>(null)
 
   // Check if there's stored data on mount
   useEffect(() => {
@@ -97,7 +73,7 @@ export default function RegistrationForm() {
     }
   }, [])
 
-  const form = useForm<FormValues>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
@@ -106,11 +82,11 @@ export default function RegistrationForm() {
       age: "",
       gender: "",
       fitnessLevel: "",
-      trekExperience: "",
+      trekExperience: "beginner",
       emergencyContact: {
         name: "",
         phone: "",
-        relation: ""
+        relation: "",
       },
       medicalInfo: "",
       height: "",
@@ -120,8 +96,8 @@ export default function RegistrationForm() {
       equipmentNeeds: "",
       howHeard: "",
       specialRequests: "",
-      termsAccepted: false
-    }
+      termsAccepted: false,
+    },
   })
 
   // Get base URL based on environment
@@ -129,115 +105,145 @@ export default function RegistrationForm() {
     return window.location.origin;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError('');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true)
 
     try {
-      // Prepare registration data for Supabase
-      const registrationData = {
-        id: uuidv4(),
-        full_name: form.getValues('fullName'),
-        email: form.getValues('email'),
-        data: {
-          phone: form.getValues('phone'),
-          age: form.getValues('age'),
-          gender: form.getValues('gender'),
-          fitnessLevel: form.getValues('fitnessLevel'),
-          emergencyContact: form.getValues('emergencyContact'),
-          medicalInfo: form.getValues('medicalInfo'),
-          height: form.getValues('height'),
-          weight: form.getValues('weight'),
-          tShirtSize: form.getValues('tShirtSize'),
-          dietaryRestrictions: form.getValues('dietaryRestrictions'),
-          equipmentNeeds: form.getValues('equipmentNeeds'),
-          howHeard: form.getValues('howHeard'),
-          specialRequests: form.getValues('specialRequests'),
-          trekExperience: form.getValues('trekExperience')
+      // Store the registration data locally for state management
+      localStorage.setItem('footslog_registration', JSON.stringify(values))
+      setRegistrationData(values)
+      
+      // Send to backend API
+      const baseUrl = getBaseUrl();
+      const response = await fetch(`${baseUrl}/api/registrations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        payment_status: 'pending',
-        registered_at: new Date().toISOString()
-      };
-
-      // Save to localStorage first
-      localStorage.setItem('footslog_registration', JSON.stringify(registrationData));
-
-      // Submit to Supabase
-      const { data, error: supabaseError } = await supabase
-        .from('simple_registrations')
-        .insert([registrationData])
-        .select()
-        .single();
-
-      if (supabaseError) {
-        throw new Error(supabaseError.message);
-      }
-
-      // Store the registration ID for payment processing
-      localStorage.setItem('registrationId', registrationData.id);
-      
-      // Show payment section
-      setCurrentStep('payment');
-      setIsSubmitting(false);
-
-    } catch (err) {
-      console.error('Registration error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to submit registration. Please try again.');
-      setIsSubmitting(false);
-    }
-  };
-
-  const handlePayment = async () => {
-    setIsSubmitting(true);
-    setError('');
-
-    try {
-      const registrationId = localStorage.getItem('registrationId');
-      if (!registrationId) {
-        throw new Error('Registration ID not found');
-      }
-
-      // Generate ticket ID
-      const ticketId = `FOOT${Date.now().toString(36).toUpperCase()}`;
-
-      // Update registration with payment status and ticket ID in Supabase
-      const { error: supabaseError } = await supabase
-        .from('simple_registrations')
-        .update({
-          payment_status: 'completed',
-          ticket_id: ticketId,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', registrationId);
-
-      if (supabaseError) {
-        throw new Error(supabaseError.message);
-      }
-
-      // Store ticket info in localStorage
-      localStorage.setItem('footslog_ticket', JSON.stringify({ ticketId }));
-      
-      // Show ticket preview
-      setTicketId(ticketId);
-      setCurrentStep('ticket');
-      setPaymentComplete(true);
-      setIsSubmitting(false);
-
-      // Trigger confetti effect
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
+        body: JSON.stringify(values)
       });
-
-    } catch (err) {
-      console.error('Payment error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to process payment. Please try again.');
-      setIsSubmitting(false);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit registration');
+      }
+      
+      // Get the response data which contains the registration ID
+      const responseData = await response.json();
+      
+      // Save the updated registration data with ID
+      if (responseData && responseData.id) {
+        const updatedData = {
+          ...values,
+          id: responseData.id
+        };
+        localStorage.setItem('footslog_registration', JSON.stringify(updatedData));
+        setRegistrationData(updatedData);
+      } else if (responseData.registration && responseData.registration.id) {
+        // Alternative response format from App Router API
+        const updatedData = {
+          ...values,
+          id: responseData.registration.id
+        };
+        localStorage.setItem('footslog_registration', JSON.stringify(updatedData));
+        setRegistrationData(updatedData);
+      }
+      
+      setIsSubmitting(false)
+      
+      // Move to payment step
+      setCurrentStep('payment')
+      
+      toast({
+        title: "Registration Submitted!",
+        description: "Please complete the payment to finalize your registration.",
+      })
+    } catch (error) {
+      console.error(error)
+      setIsSubmitting(false)
+      
+      toast({
+        title: "Registration Failed",
+        description: error instanceof Error ? error.message : "There was an error processing your registration. Please try again.",
+        variant: "destructive",
+      })
     }
-  };
-
+  }
+  
+  // Handle the payment process
+  function handlePayment() {
+    setIsSubmitting(true)
+    
+    // Simulate payment processing
+    setTimeout(async () => {
+      try {
+        // Generate a unique ticket ID
+        const uniqueId = `FSLOG-${Date.now().toString().slice(-6)}`
+        setTicketId(uniqueId)
+        
+        // Store payment and ticket data locally
+        localStorage.setItem('footslog_payment', JSON.stringify({
+          complete: true,
+          date: new Date().toISOString()
+        }))
+        localStorage.setItem('footslog_ticket', JSON.stringify({
+          ticketId: uniqueId,
+          generatedAt: new Date().toISOString()
+        }))
+        
+        // Update backend if we have registration data and ID
+        if (registrationData) {
+          const storedData = JSON.parse(localStorage.getItem('footslog_registration') || '{}')
+          if (storedData.id) {
+            // Update the payment status in the backend
+            const baseUrl = getBaseUrl();
+            const response = await fetch(`${baseUrl}/api/registrations`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': 'footslog-admin-key', // Use admin key for payment updates
+              },
+              body: JSON.stringify({
+                id: storedData.id,
+                paymentStatus: 'completed',
+                ticketId: uniqueId
+              })
+            });
+            
+            if (!response.ok) {
+              console.warn('Failed to update payment status in backend');
+            }
+          }
+        }
+        
+        setPaymentComplete(true)
+        setIsSubmitting(false)
+        setCurrentStep('ticket')
+        
+        // Trigger confetti effect on successful payment
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        })
+        
+        toast({
+          title: "Payment Successful!",
+          description: "Your trek ticket has been generated. See you on the adventure!",
+        })
+      } catch (error) {
+        console.error('Payment update error:', error);
+        setIsSubmitting(false);
+        
+        toast({
+          title: "Payment Processing Error",
+          description: "Your payment was processed but we couldn't update our records. Please contact support.",
+          variant: "destructive",
+        })
+      }
+    }, 2000)
+  }
+  
   // Reset the entire registration process
   function resetRegistration() {
     localStorage.removeItem('footslog_registration')
@@ -263,7 +269,7 @@ export default function RegistrationForm() {
         
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/3 flex justify-center items-center p-4 bg-white rounded-lg">
-            <QRCode 
+            <QRCodeSVG 
               value={`FOOTSLOG-TREK-${ticketId}`}
               size={150}
               bgColor={"#ffffff"}
@@ -510,7 +516,7 @@ export default function RegistrationForm() {
                 transition={{ duration: 0.3 }}
               >
                 <Form {...form}>
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     {/* Personal Information Section */}
                     <div className="mb-6">
                       <h3 className="text-[#D4A72C] font-medium mb-4 border-b border-[#4A6D33]/30 pb-2">Personal Information</h3>

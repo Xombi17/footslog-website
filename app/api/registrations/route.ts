@@ -23,54 +23,176 @@ export async function OPTIONS() {
 }
 
 // Handle GET request - Return all registrations
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const apiKey = request.headers.get('x-api-key') || request.nextUrl.searchParams.get('apiKey');
+  
+  // Simple API key check for admin access
+  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'footslog-admin-key') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders() });
+  }
+  
   try {
-    const { searchParams } = new URL(request.url);
-    const apiKey = searchParams.get('apiKey');
-
-    if (apiKey !== process.env.ADMIN_API_KEY) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const registrations = await getAllRegistrations();
-    return NextResponse.json(registrations);
+    return NextResponse.json(registrations, { headers: corsHeaders() });
   } catch (error) {
     console.error('Error fetching registrations:', error);
-    return NextResponse.json({ error: 'Failed to fetch registrations' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch registrations' }, 
+      { status: 500, headers: corsHeaders() }
+    );
   }
 }
 
 // Handle POST request - Add new registration
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
+    const registrationData = await request.json();
     
-    // Validate required fields
-    if (!data.email || !data.full_name) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!registrationData.fullName || !registrationData.email) {
+      return NextResponse.json(
+        { error: 'Name and email are required' }, 
+        { status: 400, headers: corsHeaders() }
+      );
     }
-
-    const registration = await createRegistration(data);
-    return NextResponse.json(registration);
+    
+    // Check if email already exists
+    const { data: existingRegistrations, error: searchError } = await supabase
+      .from('simple_registrations')  // Updated table name
+      .select('id')
+      .eq('email', registrationData.email);
+    
+    if (searchError) {
+      throw searchError;
+    }
+    
+    if (existingRegistrations && existingRegistrations.length > 0) {
+      return NextResponse.json(
+        { error: 'Email already registered' }, 
+        { status: 409, headers: corsHeaders() }
+      );
+    }
+    
+    // Add timestamp 
+    const newRegistration = {
+      ...registrationData,
+      registeredAt: new Date().toISOString(),
+      paymentStatus: 'pending'
+    };
+    
+    // Save to Supabase
+    const savedRegistration = await createRegistration(newRegistration);
+    
+    // Send confirmation email
+    try {
+      await sendEmailNotification(
+        registrationData.email,
+        'Your Footslog Trek Registration',
+        {
+          text: `Hi ${registrationData.fullName},\n\nThank you for registering for the Footslog trek. Your registration has been received. Please complete the payment to secure your spot.\n\nTotal Amount: ₹850\n\nRegards,\nFootslog Team`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #D4A72C;">Footslog Trek Registration</h2>
+              <p>Hi ${registrationData.fullName},</p>
+              <p>Thank you for registering for the Footslog trek. Your registration has been received.</p>
+              <p>Please complete the payment to secure your spot.</p>
+              <div style="background-color: #243420; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="color: #E5E1D6; margin: 0;">Total Amount: <strong style="color: #D4A72C;">₹850</strong></p>
+              </div>
+              <p>We're excited to have you join us on this adventure!</p>
+              <p>Regards,<br>Footslog Team</p>
+            </div>
+          `
+        }
+      );
+    } catch (emailError) {
+      console.error('Failed to send confirmation email:', emailError);
+      // Don't fail the registration just because email failed
+    }
+    
+    return NextResponse.json(
+      { 
+        success: true, 
+        message: 'Registration successful',
+        registration: savedRegistration
+      }, 
+      { status: 201, headers: corsHeaders() }
+    );
   } catch (error) {
-    console.error('Error creating registration:', error);
-    return NextResponse.json({ error: 'Failed to create registration' }, { status: 500 });
+    console.error('Error saving registration:', error);
+    return NextResponse.json(
+      { error: 'Failed to process registration' }, 
+      { status: 500, headers: corsHeaders() }
+    );
   }
 }
 
 // Handle PUT request - Update payment status
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
     const data = await request.json();
+    const { id, paymentStatus, ticketId } = data;
     
-    if (!data.id) {
-      return NextResponse.json({ error: 'Missing registration ID' }, { status: 400 });
+    if (!id || !paymentStatus) {
+      return NextResponse.json(
+        { error: 'Registration ID and payment status are required' }, 
+        { status: 400, headers: corsHeaders() }
+      );
     }
-
-    const updated = await updateRegistration(data.id, data);
-    return NextResponse.json(updated);
+    
+    // Update data
+    const updateData: any = {
+      paymentStatus,
+      updatedAt: new Date().toISOString()
+    };
+    
+    if (ticketId) {
+      updateData.ticketId = ticketId;
+    }
+    
+    // Update in Supabase
+    const updatedRegistration = await updateRegistration(id, updateData);
+    
+    // Send payment confirmation email if payment is completed
+    if (paymentStatus === 'completed' && updatedRegistration.email) {
+      try {
+        await sendEmailNotification(
+          updatedRegistration.email,
+          'Your Footslog Trek Payment Confirmation',
+          {
+            text: `Hi ${updatedRegistration.fullName},\n\nThank you for completing your payment for the Footslog trek. Your spot has been secured.\n\nTicket ID: ${ticketId || 'N/A'}\n\nWe look forward to seeing you on the trek!\n\nRegards,\nFootslog Team`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #D4A72C;">Footslog Trek Payment Confirmation</h2>
+                <p>Hi ${updatedRegistration.fullName},</p>
+                <p>Thank you for completing your payment for the Footslog trek. Your spot has been secured.</p>
+                <div style="background-color: #243420; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                  <p style="color: #E5E1D6; margin: 0;">Ticket ID: <strong style="color: #D4A72C;">${ticketId || 'N/A'}</strong></p>
+                </div>
+                <p>We look forward to seeing you on the trek!</p>
+                <p>Regards,<br>Footslog Team</p>
+              </div>
+            `
+          }
+        );
+      } catch (emailError) {
+        console.error('Failed to send payment confirmation email:', emailError);
+        // Don't fail the update just because email failed
+      }
+    }
+    
+    return NextResponse.json(
+      { 
+        success: true, 
+        message: 'Registration updated',
+        registration: updatedRegistration
+      }, 
+      { status: 200, headers: corsHeaders() }
+    );
   } catch (error) {
     console.error('Error updating registration:', error);
-    return NextResponse.json({ error: 'Failed to update registration' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update registration' }, 
+      { status: 500, headers: corsHeaders() }
+    );
   }
 } 

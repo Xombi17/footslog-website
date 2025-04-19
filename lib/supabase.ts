@@ -3,118 +3,198 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Check if we have the required environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing required environment variables NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn('Missing Supabase environment variables. Using mock implementation.');
 }
 
-// Initialize Supabase client with the anon key for client-side operations
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Initialize Supabase client
+// If we have a service role key, use it for more privileges
+export const supabase = createClient(
+  supabaseUrl || 'https://your-supabase-url.supabase.co',
+  supabaseServiceKey || supabaseAnonKey || 'your-supabase-anon-key'
+);
 
-// Types
-interface EmailContent {
-  text: string;
-  html: string;
-}
+// Switch to use our simple_registrations table with JSONB data
+const TABLE_NAME = 'simple_registrations';
 
-interface RegistrationData {
-  full_name: string;
-  email: string;
-  data: Record<string, any>;
-  payment_status?: string;
-  ticket_id?: string;
-}
-
-// Initialize Resend client for email
-let resend: any = null;
-
-// Dynamically import Resend to avoid build issues
-if (process.env.EMAIL_API_KEY) {
-  import('resend').then(({ Resend }) => {
-    resend = new Resend(process.env.EMAIL_API_KEY);
-  }).catch((error) => {
-    console.warn('Failed to initialize Resend:', error);
-  });
-}
-
-// Get all registrations
+// Get all registrations from the database
 export async function getAllRegistrations() {
-  const { data, error } = await supabase
-    .from('simple_registrations')
-    .select('*')
-    .order('registered_at', { ascending: false });
+  try {
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select('*')
+      .order('registered_at', { ascending: false });
 
-  if (error) throw error;
-  return data;
+    if (error) throw error;
+
+    // Transform data to match the expected format
+    return (data || []).map(record => ({
+      id: record.id,
+      email: record.email,
+      fullName: record.full_name,
+      paymentStatus: record.payment_status,
+      ticketId: record.ticket_id,
+      registeredAt: record.registered_at,
+      updatedAt: record.updated_at,
+      ...record.data // Spread all the additional fields from the JSONB data column
+    }));
+  } catch (error) {
+    console.error('Error getting registrations:', error);
+    return [];
+  }
 }
 
 // Get a registration by ID
 export async function getRegistrationById(id: string) {
-  const { data, error } = await supabase
-    .from('simple_registrations')
-    .select('*')
-    .eq('id', id)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (error) throw error;
-  return data;
+    if (error) throw error;
+    if (!data) return null;
+
+    // Transform data to match the expected format
+    return {
+      id: data.id,
+      email: data.email,
+      fullName: data.full_name,
+      paymentStatus: data.payment_status,
+      ticketId: data.ticket_id,
+      registeredAt: data.registered_at,
+      updatedAt: data.updated_at,
+      ...data.data // Spread all the additional fields from the JSONB data column
+    };
+  } catch (error) {
+    console.error(`Error getting registration with ID ${id}:`, error);
+    return null;
+  }
 }
 
 // Create a new registration
-export async function createRegistration(data: any) {
-  const { email, full_name, ...otherData } = data;
-  
-  // Check for existing registration
-  const { data: existing } = await supabase
-    .from('simple_registrations')
-    .select('id')
-    .eq('email', email)
-    .single();
+export async function createRegistration(registrationData: any) {
+  try {
+    const id = registrationData.id || uuidv4();
+    
+    // Extract the fields that we want in separate columns
+    const { 
+      fullName, 
+      email, 
+      paymentStatus = 'pending', 
+      ticketId = null,
+      id: _id, // Exclude from main data
+      ...otherFields 
+    } = registrationData;
+    
+    // Store structured data in separate columns, everything else in JSONB
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .insert({
+        id,
+        email,
+        full_name: fullName,
+        data: otherFields, // Store all other fields in the JSONB data column
+        payment_status: paymentStatus,
+        ticket_id: ticketId,
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
 
-  if (existing) {
-    throw new Error('Email already registered');
+    if (error) {
+      console.error('Supabase error details:', error);
+      throw new Error(`Error creating registration: ${JSON.stringify(error)}`);
+    }
+
+    // Return formatted data
+    return {
+      id: data.id,
+      email: data.email,
+      fullName: data.full_name,
+      paymentStatus: data.payment_status,
+      ticketId: data.ticket_id,
+      registeredAt: data.registered_at,
+      updatedAt: data.updated_at,
+      ...data.data // Spread all the additional fields from the JSONB data column
+    };
+  } catch (error) {
+    console.error('Error creating registration:', error);
+    throw error;
   }
-
-  const { data: registration, error } = await supabase
-    .from('simple_registrations')
-    .insert({
-      email,
-      full_name,
-      data: otherData,
-      payment_status: 'pending',
-      registered_at: new Date().toISOString()
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return registration;
 }
 
-// Update a registration
-export async function updateRegistration(id: string, data: any) {
-  const { payment_status, ticket_id, ...otherData } = data;
-  
-  const updateData: any = {
-    updated_at: new Date().toISOString()
-  };
+// Update an existing registration
+export async function updateRegistration(id: string, updateData: any) {
+  try {
+    // Get the current registration
+    const { data: existingData, error: fetchError } = await supabase
+      .from(TABLE_NAME)
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (payment_status) updateData.payment_status = payment_status;
-  if (ticket_id) updateData.ticket_id = ticket_id;
-  if (Object.keys(otherData).length > 0) {
-    updateData.data = otherData;
+    if (fetchError) throw fetchError;
+    if (!existingData) return null;
+
+    // Extract fields that go into separate columns vs. JSONB data
+    const { 
+      fullName, 
+      email, 
+      paymentStatus, 
+      ticketId,
+      id: _id, // Exclude from updates
+      ...otherFields 
+    } = updateData;
+    
+    // Prepare update object
+    const updateObj: any = {
+      updated_at: new Date().toISOString()
+    };
+    
+    // Add fields to separate columns if provided
+    if (fullName !== undefined) updateObj.full_name = fullName;
+    if (email !== undefined) updateObj.email = email;
+    if (paymentStatus !== undefined) updateObj.payment_status = paymentStatus;
+    if (ticketId !== undefined) updateObj.ticket_id = ticketId;
+    
+    // Handle JSONB data fields if they exist
+    if (Object.keys(otherFields).length > 0) {
+      // Merge with existing data
+      updateObj.data = { ...existingData.data, ...otherFields };
+    }
+
+    // Update the registration
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .update(updateObj)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Send payment confirmation email if payment was completed - handled in API route
+    
+    // Return formatted data
+    return {
+      id: data.id,
+      email: data.email,
+      fullName: data.full_name,
+      paymentStatus: data.payment_status,
+      ticketId: data.ticket_id,
+      registeredAt: data.registered_at,
+      updatedAt: data.updated_at,
+      ...data.data // Spread all the additional fields from the JSONB data column
+    };
+  } catch (error) {
+    console.error(`Error updating registration with ID ${id}:`, error);
+    return null;
   }
-
-  const { data: registration, error } = await supabase
-    .from('simple_registrations')
-    .update(updateData)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return registration;
 }
 
 // Get base URL based on environment
@@ -131,10 +211,19 @@ function getBaseUrl() {
 export async function sendEmailNotification(
   to: string,
   subject: string,
-  content: EmailContent
+  content: { text: string; html: string }
 ) {
+  // For now we're using a simple log since actual email sending might require
+  // additional services or Supabase Edge Functions
+  console.log(`[EMAIL] To: ${to}, Subject: ${subject}`);
+  
+  // In a real implementation, you might use Supabase Edge Functions with a mail service
+  // or integrate with a service like SendGrid, Mailchimp, etc.
+  
+  // Example of how you might implement it with an API route
   try {
-    const response = await fetch('/api/send-email', {
+    const baseUrl = getBaseUrl();
+    const response = await fetch(`${baseUrl}/api/send-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -142,42 +231,18 @@ export async function sendEmailNotification(
       body: JSON.stringify({
         to,
         subject,
-        ...content
+        text: content.text,
+        html: content.html,
       }),
     });
-
-    const result = await response.json();
-
+    
     if (!response.ok) {
-      throw new Error(result.error || 'Failed to send email');
+      throw new Error('Failed to send email');
     }
-
-    // Log email for tracking
-    await supabase
-      .from('email_logs')
-      .insert([
-        {
-          recipient: to,
-          subject: subject,
-          status: 'sent',
-          sent_at: new Date().toISOString()
-        }
-      ]);
-
-    return result;
+    
+    return true;
   } catch (error) {
-    console.error('Failed to send email:', error);
-    throw error;
+    console.error('Error sending email:', error);
+    return false;
   }
-}
-
-export async function getRegistrationByEmail(email: string) {
-  const { data, error } = await supabase
-    .from('simple_registrations')
-    .select('*')
-    .eq('email', email)
-    .single();
-
-  if (error) throw error;
-  return data;
 } 

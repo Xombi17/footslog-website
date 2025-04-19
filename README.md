@@ -1,64 +1,106 @@
-# Footslog Trek Website
+# Footslog Trek Registration System
 
-A modern website for Footslog trek registrations and management.
+This project includes a complete trek registration system with Supabase database integration and email notifications.
 
-## Features
+## Setup Instructions
 
-- Responsive design with jungle theme
-- Registration form with payment integration
-- QR code ticket generation
-- Admin dashboard for managing registrations
-- Email notifications
-- Supabase backend integration
+### 1. Create a Supabase Project
 
-## Tech Stack
+1. Go to [Supabase](https://supabase.com/) and create a new account or sign in
+2. Create a new project
+3. Note your project URL and anon key
 
-- Next.js
-- TypeScript
-- Supabase
-- Tailwind CSS
-- React Hook Form
-- Zod for validation
-- React QR Code
+### 2. Configure Environment Variables
 
-## Setup
+Copy the `.env.local` file and fill in your Supabase credentials:
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   bun install
-   ```
-3. Create a `.env.local` file with the following variables:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=your-project-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-   EMAIL_FROM=your-sender-email
-   EMAIL_API_KEY=your-email-service-api-key
-   ADMIN_API_KEY=footslog-admin-key
-   ```
-4. Run the development server:
-   ```bash
-   bun dev
-   ```
+```bash
+cp .env.local.example .env.local
+```
 
-## Environment Variables
+Then edit the `.env.local` file to add your Supabase URL and anon key:
 
-- `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anonymous key
-- `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key
-- `EMAIL_FROM`: Sender email address
-- `EMAIL_API_KEY`: Email service API key
-- `ADMIN_API_KEY`: Admin access key
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-url.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-goes-here
+ADMIN_API_KEY=your-secure-admin-key
+EMAIL_FROM=footslog@yourdomain.com
+```
 
-## Contributing
+### 3. Set Up Database Tables
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+1. In your Supabase dashboard, go to the SQL Editor
+2. Copy the contents of `supabase-setup.sql` from this project
+3. Run the SQL to create all necessary tables and functions
 
-## License
+### 4. Configure Email Notifications
 
-This project is licensed under the MIT License. 
+For email notifications, you have several options:
+
+1. **Supabase Edge Functions** - Create an edge function that connects to your preferred email service
+2. **Email Service Integration** - Set up a direct integration with services like SendGrid, Mailchimp, etc.
+3. **SMTP Configuration** - Use SMTP to send emails directly
+
+For production, we recommend option 1 or 2.
+
+### 5. Install Dependencies
+
+```bash
+bun install
+```
+
+### 6. Run the Development Server
+
+```bash
+bun dev
+```
+
+## System Features
+
+### Registration Management
+
+- User registration form with comprehensive trekker details
+- Secure database storage in Supabase
+- Payment handling with auto-generated tickets
+- Email notifications at registration and payment completion
+
+### Admin Dashboard
+
+Access the admin dashboard at `/admin/registrations` to:
+
+- View all registrations
+- Filter by payment status
+- Search for specific registrants
+- Update payment status
+- Generate tickets
+
+## Security Notes
+
+1. The current admin authentication uses a simple API key. For production, consider implementing more robust authentication.
+2. Set up proper Row Level Security in Supabase for production environments.
+3. Keep your API keys and environment variables secure.
+
+## Database Schema
+
+The main tables in the database are:
+
+1. `registrations` - Stores all trek participant data
+2. `email_logs` - Tracks email notifications sent to participants
+
+## Customization
+
+You can customize the following aspects:
+
+- Email templates in the `sendEmailNotification` function
+- Form fields in the registration form component
+- Ticket design in the ticket component
+- Payment flow and pricing
+
+## Extending the System
+
+To add more features, consider:
+
+- Adding payment gateway integration (e.g., Stripe, Razorpay)
+- Implementing QR code scanning for check-in
+- Setting up automated reminders before the trek
+- Adding post-trek feedback forms 

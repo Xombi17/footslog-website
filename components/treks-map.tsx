@@ -64,9 +64,7 @@ export default function TreksMap() {
         marginTop: "-2px"
       }}
     >
-      {/* Decorative jungle elements */}
-      <div className="absolute left-0 top-0 h-full w-24 bg-[url('/images/left-vine.svg')] bg-contain bg-left opacity-30 transform scale-150"></div>
-      <div className="absolute right-0 top-0 h-full w-24 bg-[url('/images/right-vine.svg')] bg-contain bg-right opacity-30 transform scale-150"></div>
+      {/* Decorative jungle elements removed - already in site layout */}
       
       <div className="container relative z-10 mx-auto px-4">
         <motion.div

@@ -1,27 +1,24 @@
-# Sound Files
+# Jungle Ambience Sound
 
-This directory should contain the following sound file:
+This directory should contain a file named `jungle-ambience.mp3` which is used as background jungle ambience sound for the website.
 
-- `jungle-ambience.mp3`: A background jungle ambience sound effect for the website.
+To add the sound file:
 
-## How to Add the Sound File
+1. Find a suitable jungle/forest ambience sound effect from one of these websites:
+   - [Freesound](https://freesound.org)
+   - [Zapsplat](https://www.zapsplat.com)
+   - [SoundBible](https://soundbible.com)
 
-1. Find a suitable jungle ambience sound effect from:
-   - [Freesound](https://freesound.org/)
-   - [Zapsplat](https://www.zapsplat.com/)
-   - [SoundBible](https://soundbible.com/)
+2. Requirements for the sound file:
+   - Format: MP3
+   - Duration: 30-60 seconds (should loop seamlessly)
+   - Bitrate: 128kbps or higher
+   - Volume: Normalized to -14 LUFS
+   - Content: Jungle/forest ambience with birds, insects, etc.
+   - License: Must be free for commercial use
 
-2. Download the sound file and rename it to `jungle-ambience.mp3`
-
-3. Place the file in this directory
-
-## Sound Requirements
-- Format: MP3
-- Duration: 30-60 seconds (looped)
-- Bitrate: 128kbps or higher
-- Volume: Normalized to -14 LUFS
-- Content: Jungle/forest ambience with birds, insects, and natural sounds
-- License: Must be free for commercial use
+3. Download the sound file and rename it to `jungle-ambience.mp3`
+4. Place it in this directory (`public/sounds/`)
 
 Please add your own jungle ambience sound file here. You can find suitable sound effects from:
 - Free sound effect websites

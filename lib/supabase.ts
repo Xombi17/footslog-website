@@ -2,14 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 
 // Check if we have the required environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.warn('Missing Supabase environment variables. Using mock implementation.');
+  throw new Error('Missing required environment variables NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
 }
 
-// Initialize Supabase client
+// Initialize Supabase client with the anon key for client-side operations
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Types
@@ -133,19 +133,24 @@ export async function sendEmailNotification(
   subject: string,
   content: EmailContent
 ) {
-  if (!resend) {
-    console.warn('Email service not configured or still initializing. Skipping email notification.');
-    return null;
-  }
-
   try {
-    const result = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Footslog <no-reply@footslog.com>',
-      to: [to],
-      subject: subject,
-      text: content.text,
-      html: content.html,
+    const response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        to,
+        subject,
+        ...content
+      }),
     });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to send email');
+    }
 
     // Log email for tracking
     await supabase
@@ -154,7 +159,7 @@ export async function sendEmailNotification(
         {
           recipient: to,
           subject: subject,
-          status: result ? 'sent' : 'failed',
+          status: 'sent',
           sent_at: new Date().toISOString()
         }
       ]);

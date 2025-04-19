@@ -1,5 +1,8 @@
+import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+
+const resend = new Resend(process.env.EMAIL_API_KEY);
 
 // CORS Middleware helper
 function corsHeaders() {
@@ -19,18 +22,20 @@ export async function POST(request: NextRequest) {
   try {
     const { to, subject, text, html } = await request.json();
 
-    // Validate input
-    if (!to || !subject || (!text && !html)) {
+    if (!resend) {
       return NextResponse.json(
-        { error: 'Missing required fields' }, 
-        { status: 400, headers: corsHeaders() }
+        { error: 'Email service not configured' },
+        { status: 500 }
       );
     }
 
-    // For now, we'll just log the email (this is a placeholder)
-    console.log('Sending email to:', to);
-    console.log('Subject:', subject);
-    console.log('Content:', text || html);
+    const data = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'Footslog <no-reply@footslog.com>',
+      to: [to],
+      subject,
+      text,
+      html,
+    });
 
     // Example of how you might use Supabase to log the email attempt
     const { error } = await supabase
@@ -51,16 +56,12 @@ export async function POST(request: NextRequest) {
       console.log('Continuing despite email logging error');
     }
 
-    // Return success
-    return NextResponse.json(
-      { success: true }, 
-      { headers: corsHeaders() }
-    );
+    return NextResponse.json(data);
   } catch (error) {
     console.error('Error sending email:', error);
     return NextResponse.json(
-      { error: 'Failed to send email' }, 
-      { status: 500, headers: corsHeaders() }
+      { error: 'Failed to send email' },
+      { status: 500 }
     );
   }
 } 

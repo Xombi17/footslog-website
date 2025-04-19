@@ -62,7 +62,7 @@ export default function Preloader() {
           >
             <div className="relative w-10 h-10 mr-3">
               <Image 
-                src="/images/compass-logo.svg" 
+                src="/images/rotaractlogo.png" 
                 alt="Footslog Logo" 
                 width={40} 
                 height={40}

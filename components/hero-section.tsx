@@ -242,7 +242,9 @@ export default function HeroSection() {
             alt="Jungle background" 
             fill
             priority
-            className="object-cover opacity-60"
+            sizes="(max-width: 768px) 100vw, 100vw"
+            className="object-cover object-center md:object-center opacity-60"
+            style={{ objectPosition: 'center 35%' }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#0F1A0A]/40 via-[#0F1A0A]/70 to-[#0F1A0A] z-10"></div>
         </div>
@@ -262,7 +264,7 @@ export default function HeroSection() {
         {/* Main Content - Positioned to match preloader */}
         <div className="relative z-30 flex w-full flex-col items-center justify-center px-6 text-center">
           {/* FOOTSLOG Title with letter animation similar to preloader */}
-          <div className="flex items-center justify-center mb-6 relative">
+          <div className="flex items-center justify-center mb-4 md:mb-6 relative">
             {/* Glow effect behind text */}
             <motion.div 
               className="absolute w-[130%] h-[150%] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#F3B939]/5 blur-[60px] rounded-[100%] opacity-0 hero-glow"
@@ -273,7 +275,7 @@ export default function HeroSection() {
             {titleChars.map((char, i) => (
               <span
                 key={i}
-                className={`hero-title-char-${i} inline-block font-display text-7xl md:text-9xl font-bold tracking-wider text-[#F3B939] opacity-0`}
+                className={`hero-title-char-${i} inline-block font-display text-5xl sm:text-7xl md:text-9xl font-bold tracking-wider text-[#F3B939] opacity-0`}
                 style={{ 
                   display: 'inline-block'
                 }}
@@ -284,12 +286,12 @@ export default function HeroSection() {
           </div>
 
           <div
-            className="hero-subtitle mb-8 max-w-lg opacity-0"
+            className="hero-subtitle mb-6 md:mb-8 max-w-lg opacity-0 px-4"
           >
-            <h2 className="font-body text-xl md:text-2xl text-white font-medium drop-shadow-lg mb-3 text-shadow-sm">
+            <h2 className="font-body text-lg sm:text-xl md:text-2xl text-white font-medium drop-shadow-lg mb-2 md:mb-3 text-shadow-sm">
               The Jungle Awaits Your Adventure...
             </h2>
-            <p className="text-light-300 bg-black/40 px-5 py-3 rounded-md backdrop-blur-sm text-md md:text-lg font-medium inline-block shadow-lg">
+            <p className="text-light-300 bg-black/40 px-4 py-2 md:px-5 md:py-3 rounded-md backdrop-blur-sm text-sm sm:text-md md:text-lg font-medium inline-block shadow-lg">
               Rotaract Club FRCRCE&apos;s Annual Trek
             </p>
           </div>
@@ -313,13 +315,13 @@ export default function HeroSection() {
 
         {/* Scroll Indicator */}
         <div
-          className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 transform z-40 opacity-0"
+          className="scroll-indicator absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 transform z-40 opacity-0"
         >
           <div className="flex flex-col items-center">
-            <span className="mb-2 text-sm font-light text-white/70">
+            <span className="mb-1 sm:mb-2 text-xs sm:text-sm font-light text-white/70">
               Scroll to explore
             </span>
-            <div className="h-8 w-5 rounded-full border-2 border-white/30 p-1">
+            <div className="h-6 w-4 sm:h-8 sm:w-5 rounded-full border-2 border-white/30 p-1">
               <div className="h-1 w-1 animate-scrollDown rounded-full bg-white"></div>
             </div>
           </div>

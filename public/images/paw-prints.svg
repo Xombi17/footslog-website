@@ -1,0 +1,28 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Paw Print 1 -->
+  <g transform="translate(20, 20) rotate(15)">
+    <ellipse cx="10" cy="5" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="30" cy="5" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="10" cy="25" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="30" cy="25" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="20" cy="15" rx="15" ry="10" fill="#4A6D33"/>
+  </g>
+  
+  <!-- Paw Print 2 -->
+  <g transform="translate(120, 80) rotate(-20)">
+    <ellipse cx="10" cy="5" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="30" cy="5" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="10" cy="25" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="30" cy="25" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="20" cy="15" rx="15" ry="10" fill="#4A6D33"/>
+  </g>
+  
+  <!-- Paw Print 3 -->
+  <g transform="translate(50, 150) rotate(45)">
+    <ellipse cx="10" cy="5" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="30" cy="5" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="10" cy="25" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="30" cy="25" rx="8" ry="5" fill="#4A6D33"/>
+    <ellipse cx="20" cy="15" rx="15" ry="10" fill="#4A6D33"/>
+  </g>
+</svg>

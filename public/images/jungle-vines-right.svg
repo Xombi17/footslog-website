@@ -1,0 +1,42 @@
+<svg width="400" height="800" viewBox="0 0 400 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main vines -->
+  <path d="M350,0 C320,100 380,200 310,300 C250,400 370,500 330,600 C290,700 360,800 360,800" stroke="#4A6D33" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M300,0 C270,80 330,160 260,240 C200,320 320,400 280,480 C240,560 310,640 310,700" stroke="#2E7D32" stroke-width="6" stroke-linecap="round" fill="none"/>
+  
+  <!-- Leaves -->
+  <g transform="translate(310, 120) rotate(-20)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  <g transform="translate(260, 250) rotate(10)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  <g transform="translate(330, 380) rotate(-15)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  <g transform="translate(280, 520) rotate(5)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  <g transform="translate(320, 650) rotate(-25)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  
+  <!-- Flowers -->
+  <g transform="translate(305, 180)">
+    <circle cx="0" cy="0" r="8" fill="#FF9800" />
+    <circle cx="0" cy="-10" r="5" fill="#FFEB3B" />
+    <circle cx="8" cy="-5" r="5" fill="#FFEB3B" />
+    <circle cx="8" cy="5" r="5" fill="#FFEB3B" />
+    <circle cx="0" cy="10" r="5" fill="#FFEB3B" />
+    <circle cx="-8" cy="5" r="5" fill="#FFEB3B" />
+    <circle cx="-8" cy="-5" r="5" fill="#FFEB3B" />
+  </g>
+  <g transform="translate(325, 450)">
+    <circle cx="0" cy="0" r="8" fill="#FF9800" />
+    <circle cx="0" cy="-10" r="5" fill="#FFEB3B" />
+    <circle cx="8" cy="-5" r="5" fill="#FFEB3B" />
+    <circle cx="8" cy="5" r="5" fill="#FFEB3B" />
+    <circle cx="0" cy="10" r="5" fill="#FFEB3B" />
+    <circle cx="-8" cy="5" r="5" fill="#FFEB3B" />
+    <circle cx="-8" cy="-5" r="5" fill="#FFEB3B" />
+  </g>
+</svg>

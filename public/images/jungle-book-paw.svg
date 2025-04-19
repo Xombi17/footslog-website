@@ -1,0 +1,30 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Paw print -->
+  <g transform="translate(100, 100) scale(1.8)">
+    <!-- Paw pads -->
+    <ellipse cx="-25" cy="-30" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
+    <ellipse cx="25" cy="-30" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
+    <ellipse cx="-30" cy="10" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
+    <ellipse cx="30" cy="10" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
+    <ellipse cx="0"  />
+    <ellipse cx="30" cy="10" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
+    <ellipse cx="0" cy="25" rx="25" ry="20" fill="#D4A72C" opacity="0.9" />
+    
+    <!-- Claw marks -->
+    <path d="M-25,-42 L-28,-50" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    <path d="M-20,-42 L-20,-52" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    <path d="M-15,-42 L-12,-50" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    
+    <path d="M25,-42 L28,-50" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    <path d="M20,-42 L20,-52" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    <path d="M15,-42 L12,-50" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    
+    <path d="M-30,-2 L-38,-5" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    <path d="M-35,5 L-45,5" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    <path d="M-30,12 L-38,18" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    
+    <path d="M30,-2 L38,-5" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    <path d="M35,5 L45,5" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+    <path d="M30,12 L38,18" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
+  </g>
+</svg>

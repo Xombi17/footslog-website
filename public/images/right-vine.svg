@@ -1,0 +1,15 @@
+<svg width="100" height="800" viewBox="0 0 100 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M70,0 C70,100 30,150 30,250 C30,350 70,400 70,500 C70,600 30,650 30,750 C30,800 50,800 50,800" stroke="#4A6D33" stroke-width="4" fill="none"/>
+  <path d="M30,100 C10,100 10,120 30,120" stroke="#4A6D33" stroke-width="3" fill="none"/>
+  <path d="M30,180 C10,180 10,200 30,200" stroke="#4A6D33" stroke-width="3" fill="none"/>
+  <path d="M70,300 C90,300 90,320 70,320" stroke="#4A6D33" stroke-width="3" fill="none"/>
+  <path d="M70,380 C90,380 90,400 70,400" stroke="#4A6D33" stroke-width="3" fill="none"/>
+  <path d="M30,550 C10,550 10,570 30,570" stroke="#4A6D33" stroke-width="3" fill="none"/>
+  <path d="M30,630 C10,630 10,650 30,650" stroke="#4A6D33" stroke-width="3" fill="none"/>
+  <circle cx="30" cy="120" r="5" fill="#8B9D7D"/>
+  <circle cx="30" cy="200" r="5" fill="#8B9D7D"/>
+  <circle cx="70" cy="320" r="5" fill="#8B9D7D"/>
+  <circle cx="70" cy="400" r="5" fill="#8B9D7D"/>
+  <circle cx="30" cy="570" r="5" fill="#8B9D7D"/>
+  <circle cx="30" cy="650" r="5" fill="#8B9D7D"/>
+</svg>

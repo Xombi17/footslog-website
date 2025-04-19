@@ -1,0 +1,2 @@
+Add a jungle ambience MP3 file named "jungle-ambience.mp3" here for background audio.
+If no audio file is available, the sound button will automatically hide itself. 

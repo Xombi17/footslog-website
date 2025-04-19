@@ -1,0 +1,42 @@
+<svg width="400" height="800" viewBox="0 0 400 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main vines -->
+  <path d="M50,0 C80,100 20,200 90,300 C150,400 30,500 70,600 C110,700 40,800 40,800" stroke="#4A6D33" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M100,0 C130,80 70,160 140,240 C200,320 80,400 120,480 C160,560 90,640 90,700" stroke="#2E7D32" stroke-width="6" stroke-linecap="round" fill="none"/>
+  
+  <!-- Leaves -->
+  <g transform="translate(90, 120) rotate(20)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  <g transform="translate(140, 250) rotate(-10)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  <g transform="translate(70, 380) rotate(15)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  <g transform="translate(120, 520) rotate(-5)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  <g transform="translate(80, 650) rotate(25)">
+    <path d="M0,0 C10,-15 30,-15 40,0 C50,15 30,40 20,45 C10,40 -10,15 0,0 Z" fill="#388E3C" />
+  </g>
+  
+  <!-- Flowers -->
+  <g transform="translate(95, 180)">
+    <circle cx="0" cy="0" r="8" fill="#FF9800" />
+    <circle cx="0" cy="-10" r="5" fill="#FFEB3B" />
+    <circle cx="8" cy="-5" r="5" fill="#FFEB3B" />
+    <circle cx="8" cy="5" r="5" fill="#FFEB3B" />
+    <circle cx="0" cy="10" r="5" fill="#FFEB3B" />
+    <circle cx="-8" cy="5" r="5" fill="#FFEB3B" />
+    <circle cx="-8" cy="-5" r="5" fill="#FFEB3B" />
+  </g>
+  <g transform="translate(75, 450)">
+    <circle cx="0" cy="0" r="8" fill="#FF9800" />
+    <circle cx="0" cy="-10" r="5" fill="#FFEB3B" />
+    <circle cx="8" cy="-5" r="5" fill="#FFEB3B" />
+    <circle cx="8" cy="5" r="5" fill="#FFEB3B" />
+    <circle cx="0" cy="10" r="5" fill="#FFEB3B" />
+    <circle cx="-8" cy="5" r="5" fill="#FFEB3B" />
+    <circle cx="-8" cy="-5" r="5" fill="#FFEB3B" />
+  </g>
+</svg>

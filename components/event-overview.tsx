@@ -41,10 +41,19 @@ export default function EventOverview() {
   })
 
   return (
-    <section ref={sectionRef} className="relative py-20" id="overview">
-      {/* Background with overlay */}
+    <section 
+      ref={sectionRef} 
+      className="relative py-20" 
+      id="overview"
+      style={{
+        background: "linear-gradient(to bottom, #113907, #0F1A0A)",
+        marginTop: "-2px", // Tiny negative margin to hide potential seam
+      }}
+    >
+      {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[#1A2614]/80 backdrop-blur-sm" />
+        <div className="absolute -left-24 top-1/3 w-64 h-64 rounded-full bg-amber-400/5 blur-3xl"></div>
+        <div className="absolute -right-24 bottom-1/3 w-72 h-72 rounded-full bg-amber-400/5 blur-3xl"></div>
       </div>
 
       <div className="container relative z-10 mx-auto px-4">
@@ -54,7 +63,7 @@ export default function EventOverview() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <h2 className="font-display text-4xl font-bold text-[#F3B939] md:text-5xl">The Adventure Awaits</h2>
+          <h2 className="font-display text-4xl font-bold text-[#F3B939] md:text-5xl mb-6">The Adventure Awaits</h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-[#E5E1D6]">
             <span className="italic">
               "The strength of the pack is the wolf, and the strength of the wolf is the pack."
@@ -74,10 +83,12 @@ export default function EventOverview() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false, amount: 0.5 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="animate-on-scroll"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="rounded-xl bg-gradient-to-br from-[#243420]/90 to-[#1A2614]/90 backdrop-blur-sm p-6 border border-[#4A6D33]/30 shadow-lg hover:shadow-xl transition-all duration-300 h-full group hover:translate-y-[-5px]">
+                  <div className="rounded-xl bg-[#0A1508]/70 backdrop-blur-sm p-6 border border-[#1A2614]/30 shadow-xl hover:shadow-2xl transition-all duration-300 h-full group hover:translate-y-[-5px]">
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#0F1A0A] shadow-lg border border-[#F3B939]/50 group-hover:border-[#F3B939] transition-colors duration-300">
+                      <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#0A1508] shadow-lg border border-[#F3B939]/20 group-hover:border-[#F3B939] transition-colors duration-300">
                         {event.icon}
                       </div>
                       <div>
@@ -86,7 +97,7 @@ export default function EventOverview() {
                       </div>
                     </div>
                     
-                    <p className="text-[#E5E1D6]/90 mt-3 leading-relaxed text-sm md:text-base">{event.description}</p>
+                    <p className="text-white/90 mt-3 leading-relaxed text-sm md:text-base">{event.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -94,118 +105,111 @@ export default function EventOverview() {
           </div>
         </div>
 
-        {/* Trek Details Card with Cost */}
+        {/* Trek Details Card with Cost and Map */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 0.8 }}
-          className="mx-auto max-w-4xl rounded-xl bg-gradient-to-br from-[#243420]/90 to-[#1A2614]/90 backdrop-blur-sm p-8 shadow-xl border border-[#4A6D33]/30 overflow-hidden relative mb-12"
+          className="mx-auto max-w-6xl rounded-2xl bg-[#0A1508]/70 backdrop-blur-sm p-8 shadow-2xl border border-[#1A2614]/30 overflow-hidden relative mb-12 animate-on-scroll"
         >
-          {/* Decorative elements */}
-          <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-[#F3B939]/5 blur-3xl"></div>
-          <div className="absolute -left-16 -top-16 w-48 h-48 rounded-full bg-[#F3B939]/5 blur-3xl"></div>
+          {/* Decorative elements - Match the FeaturedHighlights styling */}
+          <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-amber-400/5 blur-3xl"></div>
+          <div className="absolute -left-16 -top-16 w-48 h-48 rounded-full bg-amber-400/5 blur-3xl"></div>
 
-          <h3 className="mb-6 text-2xl font-bold text-[#F3B939] relative z-10">Trek Details</h3>
+          <h3 className="mb-6 text-3xl md:text-4xl font-bold text-[#F3B939] relative z-10 text-center">Trek Details</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
-            <div>
-              <div className="mb-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <IndianRupee className="h-5 w-5 text-[#F3B939]" />
-                  <h4 className="font-bold text-[#F3B939] text-lg">Trek Fee</h4>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
+            {/* Left Column - Trek Details */}
+            <div className="flex flex-col justify-between">
+              <div>
+                <div className="mb-8">
+                  <div className="flex items-center gap-3 mb-2">
+                    <IndianRupee className="h-6 w-6 text-[#F3B939]" />
+                    <h4 className="font-bold text-[#F3B939] text-xl">Trek Fee</h4>
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-white">₹850</span>
+                    <span className="text-white/80 text-sm">per person</span>
+                  </div>
+                  <p className="text-white/80 mt-2">Includes transportation, equipment, guides, and basic refreshments</p>
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-white">₹850</span>
-                  <span className="text-[#E5E1D6]/80 text-sm">per person</span>
+                
+                <div className="mb-8">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Info className="h-6 w-6 text-[#F3B939]" />
+                    <h4 className="font-bold text-[#F3B939] text-xl">What's Included</h4>
+                  </div>
+                  <ul className="text-white space-y-3">
+                    <li className="flex items-center gap-3">
+                      <span className="h-2 w-2 rounded-full bg-[#F3B939]"></span>
+                      <span>Professional trek guides</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="h-2 w-2 rounded-full bg-[#F3B939]"></span>
+                      <span>Transportation to and from base camp</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="h-2 w-2 rounded-full bg-[#F3B939]"></span>
+                      <span>Safety equipment and first aid</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="h-2 w-2 rounded-full bg-[#F3B939]"></span>
+                      <span>Completion certificate</span>
+                    </li>
+                  </ul>
                 </div>
-                <p className="text-[#E5E1D6]/80 mt-2 text-sm">Includes transportation, equipment, guides, and basic refreshments</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                  <div className="bg-[#0A1508] border-2 border-[#F3B939]/20 rounded-lg p-4 text-center shadow-2xl relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#F3B939]/5 to-transparent"></div>
+                    <h4 className="font-bold text-[#F3B939] relative z-10">Difficulty</h4>
+                    <p className="text-white relative z-10">Moderate</p>
+                  </div>
+                  <div className="bg-[#0A1508] border-2 border-[#F3B939]/20 rounded-lg p-4 text-center shadow-2xl relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#F3B939]/5 to-transparent"></div>
+                    <h4 className="font-bold text-[#F3B939] relative z-10">Distance</h4>
+                    <p className="text-white relative z-10">12 km</p>
+                  </div>
+                  <div className="bg-[#0A1508] border-2 border-[#F3B939]/20 rounded-lg p-4 text-center shadow-2xl relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#F3B939]/5 to-transparent"></div>
+                    <h4 className="font-bold text-[#F3B939] relative z-10">Elevation</h4>
+                    <p className="text-white relative z-10">1,200 m</p>
+                  </div>
+                </div>
               </div>
               
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <Info className="h-5 w-5 text-[#F3B939]" />
-                  <h4 className="font-bold text-[#F3B939] text-lg">What's Included</h4>
-                </div>
-                <ul className="text-[#E5E1D6] space-y-2">
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3B939]"></span>
-                    <span>Professional trek guides</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3B939]"></span>
-                    <span>Transportation to and from base camp</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3B939]"></span>
-                    <span>Safety equipment and first aid</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3B939]"></span>
-                    <span>Completion certificate</span>
-                  </li>
-                </ul>
+              <div className="text-center mt-6">
+                <a 
+                  href="/register" 
+                  className="inline-block px-10 py-4 bg-[#F3B939] hover:bg-amber-500 text-[#0A1508] font-bold rounded-full transition-all duration-300 text-xl shadow-lg hover:shadow-amber-400/30 hover:scale-105"
+                >
+                  Register Now
+                </a>
               </div>
             </div>
             
-            <div className="relative h-64 rounded-lg overflow-hidden">
-              <Image 
-                src="/images/sandhanvalley.png" 
-                alt="Sandhan Valley"
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0F1A0A]/90 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <div className="flex items-center gap-2">
+            {/* Right Column - Google Map */}
+            <div className="h-full">
+              <div className="bg-[#0A1508] border-2 border-[#F3B939]/20 rounded-xl overflow-hidden shadow-2xl h-full flex flex-col">
+                <div className="p-4 flex items-center gap-2 border-b border-[#1A2614]/50">
                   <MapPin className="h-5 w-5 text-[#F3B939]" />
-                  <h4 className="text-xl font-bold text-white">Sandhan Valley</h4>
+                  <div>
+                    <h4 className="text-xl font-bold text-white">Sandhan Valley</h4>
+                    <p className="text-white/80 text-sm">Western Ghats, Maharashtra</p>
+                  </div>
                 </div>
-                <p className="text-[#E5E1D6]/90 text-sm">Western Ghats, Maharashtra</p>
+                <div className="w-full h-full min-h-[350px] relative">
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7521.258131091493!2d73.6860967!3d19.51458835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bdd7710dee4b92b%3A0x9b038473bf56be32!2sSandhan%20Valley!5e0!3m2!1sen!2sin!4v1745074834552!5m2!1sen!2sin" 
+                    className="absolute inset-0 w-full h-full border-0"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="mt-8 grid gap-4 md:grid-cols-3 relative z-10">
-            <motion.div
-              className="rounded-lg bg-[#0F1A0A]/50 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.8 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              <h4 className="font-bold text-[#F3B939]">Difficulty</h4>
-              <p className="text-[#E5E1D6]">Moderate</p>
-            </motion.div>
-            <motion.div
-              className="rounded-lg bg-[#0F1A0A]/50 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.8 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-            >
-              <h4 className="font-bold text-[#F3B939]">Distance</h4>
-              <p className="text-[#E5E1D6]">12 km</p>
-            </motion.div>
-            <motion.div
-              className="rounded-lg bg-[#0F1A0A]/50 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.8 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-            >
-              <h4 className="font-bold text-[#F3B939]">Elevation</h4>
-              <p className="text-[#E5E1D6]">1,200 m</p>
-            </motion.div>
-          </div>
-          
-          <div className="text-center mt-8 relative z-10">
-            <a 
-              href="/register" 
-              className="inline-block px-8 py-3 bg-[#F3B939] hover:bg-amber-500 text-[#0A1508] font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-amber-400/30 hover:scale-105"
-            >
-              Register Now
-            </a>
           </div>
         </motion.div>
       </div>

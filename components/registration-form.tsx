@@ -17,6 +17,7 @@ import confetti from 'canvas-confetti'
 import QRCode from 'react-qr-code'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { v4 as uuidv4 } from 'uuid'
 
 // Define the form schema type
 type FormValues = z.infer<typeof formSchema>
@@ -136,6 +137,7 @@ export default function RegistrationForm() {
     try {
       // Prepare registration data for Supabase
       const registrationData = {
+        id: uuidv4(),
         full_name: form.getValues('fullName'),
         email: form.getValues('email'),
         data: {
@@ -173,7 +175,7 @@ export default function RegistrationForm() {
       }
 
       // Store the registration ID for payment processing
-      localStorage.setItem('registrationId', data.id);
+      localStorage.setItem('registrationId', registrationData.id);
       
       // Show payment section
       setCurrentStep('payment');

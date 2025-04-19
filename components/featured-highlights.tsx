@@ -196,6 +196,40 @@ export default function FeaturedHighlights() {
         <div className="absolute -left-24 top-1/3 w-64 h-64 rounded-full bg-amber-400/5 blur-3xl"></div>
         <div className="absolute -right-24 bottom-1/3 w-72 h-72 rounded-full bg-amber-400/5 blur-3xl"></div>
       </div>
+      
+      {/* Mowgli character decorations */}
+      <div className="absolute top-40 left-10 w-32 h-32 opacity-15 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={130}
+          height={130}
+          className="object-contain rotate-12"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+        />
+      </div>
+      
+      <div className="absolute top-80 right-5 w-24 h-24 opacity-15 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={100}
+          height={100}
+          className="object-contain -rotate-6"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+        />
+      </div>
+      
+      <div className="absolute bottom-40 left-20 w-20 h-20 opacity-15 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={80}
+          height={80}
+          className="object-contain rotate-45"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+        />
+      </div>
 
       {/* Countdown Timer Section */}
       <div className="pb-12 pt-20">

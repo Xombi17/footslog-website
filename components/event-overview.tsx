@@ -96,6 +96,7 @@ export default function EventOverview() {
           width={180}
           height={180}
           className="object-contain"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>
       
@@ -106,6 +107,30 @@ export default function EventOverview() {
           width={150}
           height={150}
           className="object-contain"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+        />
+      </div>
+      
+      {/* Additional Mowgli images in different sizes */}
+      <div className="absolute top-40 left-10 w-28 h-28 opacity-15 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={120}
+          height={120}
+          className="object-contain rotate-12"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+        />
+      </div>
+      
+      <div className="absolute bottom-20 right-20 w-24 h-24 opacity-15 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={100}
+          height={100}
+          className="object-contain -rotate-6"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>
 

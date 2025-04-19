@@ -2,6 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useInView } from "framer-motion"
+import Image from "next/image"
 
 // Group itinerary items by character guides
 const itineraryByGuide = [
@@ -64,8 +65,46 @@ export default function TreksMap() {
         marginTop: "-2px"
       }}
     >
-      {/* Decorative jungle elements removed - already in site layout */}
+      {/* Decorative jungle elements */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute -left-24 top-1/3 w-64 h-64 rounded-full bg-amber-400/5 blur-3xl"></div>
+        <div className="absolute -right-24 bottom-1/3 w-72 h-72 rounded-full bg-amber-400/5 blur-3xl"></div>
+      </div>
       
+      {/* Mowgli character decorations */}
+      <div className="absolute top-20 right-10 w-36 h-36 opacity-15 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={140}
+          height={140}
+          className="object-contain rotate-6"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+        />
+      </div>
+      
+      <div className="absolute top-60 left-5 w-28 h-28 opacity-15 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={110}
+          height={110}
+          className="object-contain -rotate-12"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+        />
+      </div>
+      
+      <div className="absolute bottom-60 right-10 w-24 h-24 opacity-15 z-0">
+        <Image
+          src="/images/mowgly-hanging.png"
+          alt="Mowgli"
+          width={90}
+          height={90}
+          className="object-contain rotate-30"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+        />
+      </div>
+
       <div className="container relative z-10 mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -153,7 +192,7 @@ export default function TreksMap() {
           </blockquote>
           <p className="text-white/80">— Baloo, The Jungle Book</p>
         </motion.div>
-        
+
         {/* Call to action */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

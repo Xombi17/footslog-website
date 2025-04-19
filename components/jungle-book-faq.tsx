@@ -81,6 +81,7 @@ export default function JungleBookFAQ() {
           width={160}
           height={160}
           className="object-contain -rotate-12"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>
       
@@ -134,6 +135,7 @@ export default function JungleBookFAQ() {
                         alt={faq.character}
                         fill
                         className="object-cover"
+                        style={{ filter: 'drop-shadow(0 0 5px rgba(0, 0, 0, 0.5))' }}
                       />
                     </div>
                     <div>

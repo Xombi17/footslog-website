@@ -39,6 +39,7 @@ export default function Preloader() {
                 width={160}
                 height={160}
                 className="object-contain -rotate-12"
+                style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
               />
             </div>
             <div className="absolute top-10 right-10 w-40 h-40 opacity-30">

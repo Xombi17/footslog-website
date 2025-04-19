@@ -101,6 +101,7 @@ export default function Testimonials() {
           width={160}
           height={160}
           className="object-contain"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>
       
@@ -111,7 +112,8 @@ export default function Testimonials() {
           alt="King Louie"
           width={180}
           height={180}
-          className="object-contain rounded-full"
+          className="object-contain"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
         />
       </div>
       

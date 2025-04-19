@@ -183,7 +183,7 @@ export default function TrekEquipment() {
       ref={sectionRef} 
       className="relative py-20 overflow-hidden" 
       id="equipment"
-      style={{
+          style={{
         background: "linear-gradient(to bottom, #113907, #0F1A0A)",
         marginTop: "-2px"
       }}
@@ -255,28 +255,28 @@ export default function TrekEquipment() {
         <div className="mb-12">
           <div className="bg-[#0A1508]/70 backdrop-blur-sm rounded-2xl p-8 border border-[#1A2614]/30 shadow-2xl">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item, index) => (
-                <motion.div
-                  key={item.name}
+          {filteredItems.map((item, index) => (
+            <motion.div
+              key={item.name}
                   className="flex gap-4 items-start group"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                   transition={{ duration: 0.4, delay: 0.2 + index * 0.05 }}
                   whileHover={{ scale: 1.02 }}
-                >
+            >
                   <div className="flex-shrink-0 mt-1">
                     <div className="h-12 w-12 rounded-full bg-[#0A1508] border-2 border-[#F3B939]/20 group-hover:border-[#F3B939]/40 flex items-center justify-center transition-colors duration-300">
-                      {item.icon}
+                  {item.icon}
                     </div>
-                  </div>
-                  <div>
+                </div>
+                <div>
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-lg font-bold text-white group-hover:text-[#F3B939] transition-colors duration-300">{item.name}</h3>
                       {item.essential && (
                         <span className="text-xs font-medium bg-[#F3B939]/20 text-[#F3B939] px-2 py-0.5 rounded-full">
                           Essential
-                        </span>
-                      )}
+                      </span>
+                    )}
                     </div>
                     <p className="text-white/70">{item.description}</p>
                   </div>
@@ -331,10 +331,10 @@ export default function TrekEquipment() {
                   <p className="text-white/70 ml-8">Drink water regularly even if you don't feel thirsty. Jungle treks can be deceptively dehydrating.</p>
                 </div>
               </div>
-            </div>
-          </div>
-        </motion.div>
-        
+                </div>
+              </div>
+            </motion.div>
+
         {/* Call to action */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

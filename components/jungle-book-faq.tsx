@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { ChevronDown } from "lucide-react"
+import { useState, useRef } from "react"
+import { motion, useInView } from "framer-motion"
+import { ChevronDown, Quote } from "lucide-react"
 import Image from "next/image"
 
 type FAQItem = {
@@ -47,101 +47,85 @@ const faqs: FAQItem[] = [
 
 export default function JungleBookFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: false, amount: 0.3 });
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <section className="relative py-16 overflow-hidden" style={{
-      background: "linear-gradient(to bottom, #1A2C1C, #0F1A0A)",
-    }}>
-      {/* Background decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10">
-        <Image 
-          src="/images/jungle-book-bg.png" 
-          alt="Jungle background" 
-          fill 
-          className="object-cover opacity-20"
-        />
+    <div ref={containerRef} className="py-20 relative overflow-hidden bg-[#0F1A0A]">
+      {/* Diagonal decorative element - matches testimonials */}
+      <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-r from-[#0F1A0A] via-[#4A6D33]/20 to-[#0F1A0A] transform skew-y-2" />
+      
+      {/* Background elements - similar to testimonials */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 right-10 w-24 h-24 rounded-full bg-[#D4A72C]/30" />
+        <div className="absolute bottom-40 left-20 w-32 h-32 rounded-full bg-[#4A6D33]/20" />
+        <div className="absolute top-1/2 right-1/3 w-16 h-16 rounded-full bg-[#D4A72C]/20" />
       </div>
       
-      {/* Jungle vines */}
-      <div className="absolute right-0 top-20 h-80 w-20">
+      {/* Jungle vines as subtle background elements */}
+      <div className="absolute right-0 top-20 h-80 w-20 opacity-10">
         <Image
           src="/images/jungle-vines-right.svg"
           alt="Jungle vines"
           width={100}
           height={400}
-          className="opacity-30"
         />
       </div>
       
-      <div className="absolute left-0 bottom-20 h-80 w-20">
+      <div className="absolute left-0 bottom-20 h-80 w-20 opacity-10">
         <Image
           src="/images/jungle-vines-right.svg"
           alt="Jungle vines"
           width={100}
           height={400}
-          className="opacity-30 rotate-180"
+          className="rotate-180"
         />
       </div>
       
-      <div className="container px-4 mx-auto max-w-6xl relative z-10">
-        <div className="text-center mb-14">
-          <motion.div
-            className="inline-block mb-4"
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-center mb-12"
+        >
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: .4 }}
-            viewport={{ once: true }}
-          >
-            <Image 
-              src="/images/jungle-book-paw.svg" 
-              alt="Paw print" 
-              width={50} 
-              height={50} 
-              className="opacity-30"
-            />
-          </motion.div>
-          
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-4 text-[#F3B939] font-display"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: .6 }}
-            viewport={{ once: true }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl md:text-4xl font-bold text-[#D4A72C] mb-4"
           >
             QUESTIONS FROM THE JUNGLE
           </motion.h2>
           
-          <motion.p 
-            className="text-lg text-[#ffffffcc] max-w-3xl mx-auto"
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: .6, delay: 0.2 }}
-            viewport={{ once: true }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-[#E5E1D6]/70 max-w-2xl mx-auto"
           >
             Our jungle friends have some questions you might be wondering about too!
           </motion.p>
-        </div>
+        </motion.div>
 
         <div className="max-w-4xl mx-auto">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
-              className="mb-6"
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.1 * index }}
+              className="mb-6"
             >
               <div 
-                className="flex items-center p-5 cursor-pointer rounded-lg"
-                style={{ background: "rgba(41, 76, 47, 0.5)" }}
+                className="flex items-center p-5 cursor-pointer rounded-lg bg-[#243420] shadow-md"
                 onClick={() => toggleFAQ(index)}
               >
-                <div className="relative w-12 h-12 mr-4 rounded-full overflow-hidden">
+                <div className="relative w-12 h-12 mr-4 rounded-full overflow-hidden border-4 border-[#4A6D33]/50">
                   <Image 
                     src={faq.image} 
                     alt={faq.character} 
@@ -150,24 +134,27 @@ export default function JungleBookFAQ() {
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white">{faq.question}</h3>
-                  <p className="text-sm text-white/70">Asked by {faq.character}</p>
+                  <h3 className="text-lg font-bold text-[#E5E1D6]">{faq.question}</h3>
+                  <p className="text-sm text-[#E5E1D6]/70">Asked by {faq.character}</p>
                 </div>
                 <ChevronDown 
-                  className={`text-white transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`} 
+                  className={`text-[#D4A72C] transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`} 
                   size={20}
                 />
               </div>
               
               {openIndex === index && (
                 <motion.div 
-                  className="p-6 bg-[#1a2c1c]/80 rounded-b-lg"
+                  className="p-6 bg-[#243420]/80 rounded-b-lg border-t border-[#4A6D33]/30 mt-px"
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <p className="text-white/90 leading-relaxed">{faq.answer}</p>
+                  <div className="text-[#D4A72C] mb-3">
+                    <Quote className="h-6 w-6 opacity-70" />
+                  </div>
+                  <p className="text-[#E5E1D6]/90 leading-relaxed">{faq.answer}</p>
                 </motion.div>
               )}
             </motion.div>
@@ -175,21 +162,20 @@ export default function JungleBookFAQ() {
         </div>
         
         <motion.div 
-          className="mt-14 text-center"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: .6, delay: 0.4 }}
-          viewport={{ once: true }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-10 text-center"
         >
-          <p className="text-white/80 mb-6">Don't see your question? Feel free to reach out!</p>
+          <p className="text-[#E5E1D6]/70 mb-6">Don't see your question? Feel free to reach out!</p>
           <a 
             href="mailto:contact@footslog.com" 
-            className="inline-block px-10 py-4 bg-[#F3B939] hover:bg-amber-500 text-[#0A1508] font-bold rounded-full transition-all duration-300 text-xl shadow-lg hover:shadow-amber-400/30 hover:scale-105"
+            className="inline-block px-8 py-3 rounded-full bg-[#243420] text-[#D4A72C] hover:bg-[#D4A72C] hover:text-[#0F1A0A] transition-colors"
           >
             Contact Us
           </a>
         </motion.div>
       </div>
-    </section>
+    </div>
   );
 } 

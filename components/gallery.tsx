@@ -14,25 +14,25 @@ const naturalWonders = [
     name: "Stargazing Experience",
     description: "Experience the breathtaking night sky view from Sandhan Valley, one of Maharashtra's best stargazing spots. The narrow gorge opens up to reveal a blanket of stars unlike anything you've seen in the city.",
     stats: { bestTime: "Clear moonless nights", duration: "2-3 hours", highlight: "Milky Way visibility" },
-    image: "/images/sandhanvalley.png",
+    image: "/images/stargazing.png",
   },
   {
     name: "Firefly Magic",
     description: "During pre-monsoon months, witness the magical spectacle of thousands of fireflies illuminating the valley with their synchronous flashing, creating a natural light show in the forest.",
     stats: { bestTime: "May-June 2025", duration: "Evening hours", highlight: "Synchronous flashing" },
-    image: "/images/sandhanvalley.png",
+    image: "/images/fireflies.jpg",
   },
   {
     name: "Valley of Shadows",
     description: "Known as the 'Valley of Shadows,' Sandhan's towering walls create dramatic light and shadow effects throughout the day as sunlight filters through the narrow gorge.",
     stats: { bestTime: "Morning/Evening", duration: "All day", highlight: "Golden hour shadows" },
-    image: "/images/sandhanvalley.png",
+    image: "/images/valley.png",
   },
   {
     name: "Night Camping",
     description: "Surrounded by the majestic Sahyadri range, camping in Sandhan Valley offers an otherworldly experience. Fall asleep to the sounds of nature and wake up to the breathtaking valley views.",
     stats: { bestTime: "Winter months", duration: "Overnight", highlight: "Sunrise views" },
-    image: "/images/sandhanvalley.png",
+    image: "/images/nightcamping.jpg",
   }
 ]
 

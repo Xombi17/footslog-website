@@ -1,30 +1,7 @@
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Paw print -->
-  <g transform="translate(100, 100) scale(1.8)">
-    <!-- Paw pads -->
-    <ellipse cx="-25" cy="-30" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
-    <ellipse cx="25" cy="-30" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
-    <ellipse cx="-30" cy="10" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
-    <ellipse cx="30" cy="10" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
-    <ellipse cx="0"  />
-    <ellipse cx="30" cy="10" rx="15" ry="12" fill="#D4A72C" opacity="0.9" />
-    <ellipse cx="0" cy="25" rx="25" ry="20" fill="#D4A72C" opacity="0.9" />
-    
-    <!-- Claw marks -->
-    <path d="M-25,-42 L-28,-50" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    <path d="M-20,-42 L-20,-52" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    <path d="M-15,-42 L-12,-50" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    
-    <path d="M25,-42 L28,-50" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    <path d="M20,-42 L20,-52" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    <path d="M15,-42 L12,-50" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    
-    <path d="M-30,-2 L-38,-5" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    <path d="M-35,5 L-45,5" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    <path d="M-30,12 L-38,18" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    
-    <path d="M30,-2 L38,-5" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    <path d="M35,5 L45,5" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-    <path d="M30,12 L38,18" stroke="#D4A72C" stroke-width="2" stroke-linecap="round" />
-  </g>
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M32.5 17.5C28.5 17.5 25 21 25 25C25 29 28.5 32.5 32.5 32.5C36.5 32.5 40 29 40 25C40 21 36.5 17.5 32.5 17.5Z" fill="white" fill-opacity="0.3"/>
+  <path d="M60 20C56 20 52.5 23.5 52.5 27.5C52.5 31.5 56 35 60 35C64 35 67.5 31.5 67.5 27.5C67.5 23.5 64 20 60 20Z" fill="white" fill-opacity="0.3"/>
+  <path d="M22.5 40C18.5 40 15 43.5 15 47.5C15 51.5 18.5 55 22.5 55C26.5 55 30 51.5 30 47.5C30 43.5 26.5 40 22.5 40Z" fill="white" fill-opacity="0.3"/>
+  <path d="M70 42.5C66 42.5 62.5 46 62.5 50C62.5 54 66 57.5 70 57.5C74 57.5 77.5 54 77.5 50C77.5 46 74 42.5 70 42.5Z" fill="white" fill-opacity="0.3"/>
+  <path d="M35 60C35 60 30 65 30 75C30 85 40 85 45 80C50 75 60 75 65 80C70 85 80 85 80 75C80 65 75 60 75 60C75 60 65 62.5 55 62.5C45 62.5 35 60 35 60Z" fill="white" fill-opacity="0.3"/>
 </svg>

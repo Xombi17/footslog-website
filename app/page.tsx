@@ -13,6 +13,7 @@ import TrekEquipment from "@/components/trek-equipment"
 import TreksMap from "@/components/treks-map"
 import AchievementsStats from "@/components/achievements-stats"
 import SmoothScroll from "@/components/smooth-scroll"
+import JungleBookFAQ from "@/components/jungle-book-faq"
 
 export default function Home() {
   return (
@@ -40,6 +41,7 @@ export default function Home() {
               <NaturalWonders />
               <AchievementsStats />
               <Testimonials />
+              <JungleBookFAQ />
 
               {/* Register Call to Action */}
               <div id="register" className="relative py-20 overflow-hidden" style={{

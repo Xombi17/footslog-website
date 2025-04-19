@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import Image from "next/image"
+import Script from 'next/script'
 
 const inter = Inter({
   subsets: ["latin"],
@@ -52,6 +53,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        <Script id="redirect-to-root" strategy="beforeInteractive">
+          {`
+            if (window.performance && window.performance.navigation.type === 1 && window.location.pathname !== '/') {
+              window.location.href = '/';
+            }
+          `}
+        </Script>
       </head>
       <body className={`${inter.variable} ${poppins.variable} ${playfair.variable} font-sans relative`}>
         {/* Left vine decoration */}

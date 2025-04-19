@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 
 export default function Preloader() {
   const [loading, setLoading] = useState(true)
@@ -27,7 +28,37 @@ export default function Preloader() {
           exit={{ opacity: 0 }}
           transition={{ duration: 1, ease: "easeInOut" }}
         >
-          <div className="flex items-center justify-center overflow-hidden">
+          {/* Logo Element - Similar to navigation */}
+          <motion.div 
+            className="absolute top-8 left-8 flex items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <div className="relative w-10 h-10 mr-3">
+              <Image 
+                src="/images/compass-logo.svg" 
+                alt="Footslog Logo" 
+                width={40} 
+                height={40}
+                className="opacity-90"
+              />
+              <motion.div
+                className="absolute inset-0"
+                animate={{ rotate: 360 }}
+                transition={{ 
+                  duration: 15, 
+                  ease: "linear",
+                  repeat: Infinity 
+                }}
+              >
+                <div className="absolute top-1 left-1/2 w-1 h-1 bg-[#F3B939] rounded-full transform -translate-x-1/2" />
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Main Title - FOOTSLOG */}
+          <div className="flex items-center justify-center overflow-hidden mb-6">
             {titleChars.map((char, i) => (
               <motion.span
                 key={i}
@@ -59,7 +90,7 @@ export default function Preloader() {
           </div>
           
           <motion.div
-            className="h-1 bg-[#D4A72C] mt-8"
+            className="h-1 bg-[#D4A72C] mt-2"
             initial={{ width: 0 }}
             animate={{ width: "200px" }}
             transition={{ 
@@ -67,6 +98,15 @@ export default function Preloader() {
               ease: "easeInOut" 
             }}
           />
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.2 }}
+            className="text-white/80 text-lg mt-6 font-medium"
+          >
+            The Jungle Awaits...
+          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>

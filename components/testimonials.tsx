@@ -26,7 +26,7 @@ export default function Testimonials() {
       name: "Ananya Sharma",
       role: "3-time Participant",
       quote: "Footslog was more than just a trek—it was a journey that pushed me beyond my limits and showed me what I'm truly capable of. The team's organization was impeccable, and the memories created will last a lifetime.",
-      image: "/images/testimonial-1.jpg",
+      image: "https://images.unsplash.com/photo-1622151834677-70f982c9adef?q=80&w=300&auto=format&fit=crop",
       rating: 5
     },
     {
@@ -34,7 +34,7 @@ export default function Testimonials() {
       name: "Rohan Mehta",
       role: "First-time Trekker",
       quote: "As someone who'd never trekked before, I was nervous about joining Footslog. The organizers made everyone feel welcome and supported throughout the journey. The beauty of the Sahyadris combined with new friendships made this an unforgettable experience.",
-      image: "/images/testimonial-2.jpg",
+      image: "https://images.unsplash.com/photo-1501554728187-ce583db33af7?q=80&w=300&auto=format&fit=crop",
       rating: 5
     },
     {
@@ -42,7 +42,7 @@ export default function Testimonials() {
       name: "Priya Desai",
       role: "Photography Enthusiast",
       quote: "The breathtaking views throughout the trek were a photographer's dream. From misty mountains to star-filled nights, every moment was picturesque. The guides were knowledgeable about the local flora and fauna, adding educational value to the adventure.",
-      image: "/images/testimonial-3.jpg",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=300&auto=format&fit=crop",
       rating: 4
     },
     {
@@ -50,7 +50,7 @@ export default function Testimonials() {
       name: "Vikram Singh",
       role: "Adventurer",
       quote: "Footslog strikes the perfect balance between adventure and safety. The trek was challenging enough to feel accomplished but organized in a way that everyone could participate regardless of experience level. I'll definitely be back next year!",
-      image: "/images/testimonial-4.jpg",
+      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=300&auto=format&fit=crop",
       rating: 5
     },
   ]

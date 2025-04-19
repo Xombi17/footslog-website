@@ -26,7 +26,7 @@ const faqs: FAQItem[] = [
     question: "What should I pack for the trek?",
     answer: "Essential items include appropriate footwear, comfortable clothing, a backpack, water bottle, snacks, sunscreen, insect repellent, and a first aid kit. Check our equipment section for a detailed packing list.",
     image: "/images/bagheera.png",
-    color: "from-[#1A2614]/90 to-[#0F1A0A]/95",
+    color: "from-[#0F1A0A]/95 to-[#1A2614]/90",
   },
   {
     character: "Baloo",

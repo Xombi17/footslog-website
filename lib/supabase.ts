@@ -4,18 +4,22 @@ import { Resend } from 'resend';
 
 // Check if we have the required environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 if (!supabaseUrl || !supabaseKey) {
   console.warn('Missing Supabase environment variables. Using mock implementation.');
 }
 
 // Initialize Supabase client
-// If we have a service role key, use it for more privileges
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Initialize Resend client for email
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend: Resend | null = null;
+if (process.env.EMAIL_API_KEY) {
+  resend = new Resend(process.env.EMAIL_API_KEY);
+} else {
+  console.warn('Missing EMAIL_API_KEY. Email functionality will be disabled.');
+}
 
 // Types
 interface EmailContent {
@@ -126,9 +130,14 @@ export async function sendEmailNotification(
   subject: string,
   content: EmailContent
 ) {
+  if (!resend) {
+    console.warn('Email service not configured. Skipping email notification.');
+    return null;
+  }
+
   try {
     const result = await resend.emails.send({
-      from: 'Footslog <no-reply@footslog.com>',
+      from: process.env.EMAIL_FROM || 'Footslog <no-reply@footslog.com>',
       to: [to],
       subject: subject,
       text: content.text,

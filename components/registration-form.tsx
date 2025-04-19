@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useToast } from "@/hooks/use-toast"
 import confetti from 'canvas-confetti'
-import { QRCodeSVG } from 'react-qr-code'
+import QRCode from 'react-qr-code'
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
@@ -269,7 +269,7 @@ export default function RegistrationForm() {
         
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/3 flex justify-center items-center p-4 bg-white rounded-lg">
-            <QRCodeSVG 
+            <QRCode 
               value={`FOOTSLOG-TREK-${ticketId}`}
               size={150}
               bgColor={"#ffffff"}

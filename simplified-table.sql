@@ -33,7 +33,8 @@ CREATE TABLE email_logs (
   recipient TEXT NOT NULL,
   subject TEXT NOT NULL,
   content TEXT,
-  status TEXT DEFAULT 'sent'
+  status TEXT DEFAULT 'sent',
+  sent_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- Enable RLS on email logs

@@ -225,6 +225,9 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#0F1A0A]/40 via-[#0F1A0A]/70 to-[#0F1A0A] z-10"></div>
         </div>
         
+        {/* Bottom Gradient for Smooth Transition */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0F1A0A] to-transparent z-20"></div>
+        
         {/* Particles Background */}
         {initialized && (
           <Particles

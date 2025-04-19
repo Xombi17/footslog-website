@@ -2,28 +2,33 @@
 
 import { useRef } from "react"
 import { motion, useInView, useScroll, useTransform } from "framer-motion"
-import { MapPin, Calendar, Mountain, Droplets, Users } from "lucide-react"
+import { MapPin, Calendar, Mountain, Droplets, Users, Info, IndianRupee } from "lucide-react"
+import Image from "next/image"
 
 const timelineEvents = [
   {
     date: "October 15, 2023",
     title: "Registration Opens",
-    icon: <Calendar className="h-6 w-6 text-[#D4A72C]" />,
+    description: "Register early to secure your spot for this exciting adventure! Limited seats available.",
+    icon: <Calendar className="h-6 w-6 text-[#F3B939]" />,
   },
   {
     date: "November 5, 2023",
     title: "Pre-Trek Briefing",
-    icon: <Users className="h-6 w-6 text-[#D4A72C]" />,
+    description: "Gather for an essential briefing on trek details, safety guidelines, and equipment checklist.",
+    icon: <Users className="h-6 w-6 text-[#F3B939]" />,
   },
   {
     date: "November 18-20, 2023",
     title: "Footslog Trek",
-    icon: <Mountain className="h-6 w-6 text-[#D4A72C]" />,
+    description: "The main event! Three days of adventure through the breathtaking Sandhan Valley.",
+    icon: <Mountain className="h-6 w-6 text-[#F3B939]" />,
   },
   {
     date: "November 25, 2023",
     title: "Photo Sharing & Certificates",
-    icon: <Droplets className="h-6 w-6 text-[#D4A72C]" />,
+    description: "Celebrate your achievement! Share photos and receive your completion certificates.",
+    icon: <Droplets className="h-6 w-6 text-[#F3B939]" />,
   },
 ]
 
@@ -49,7 +54,7 @@ export default function EventOverview() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <h2 className="font-serif text-4xl font-bold text-[#D4A72C] md:text-5xl">The Adventure Awaits</h2>
+          <h2 className="font-display text-4xl font-bold text-[#F3B939] md:text-5xl">The Adventure Awaits</h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-[#E5E1D6]">
             <span className="italic">
               "The strength of the pack is the wolf, and the strength of the wolf is the pack."
@@ -58,108 +63,149 @@ export default function EventOverview() {
           </p>
         </motion.div>
 
-        {/* Timeline */}
+        {/* Timeline Cards - Redesigned */}
         <div className="mb-20">
-          <div className="relative mx-auto max-w-4xl">
-            {/* Timeline line */}
-            <motion.div
-              className="absolute left-1/2 top-0 w-1 bg-[#D4A72C]"
-              style={{
-                height: useTransform(scrollYProgress, [0, 0.9], ["0%", "100%"]),
-                translateX: "-50%",
-              }}
-            ></motion.div>
-
-            {/* Timeline events */}
-            {timelineEvents.map((event, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                className={`relative mb-12 flex ${index % 2 === 0 ? "justify-end md:flex-row-reverse" : "justify-start"}`}
-              >
-                <div className={`w-full md:w-5/12 ${index % 2 === 0 ? "md:pr-8" : "md:pl-8"}`}>
-                  <div className="rounded-lg bg-[#243420]/80 backdrop-blur-sm p-6 shadow-lg border border-[#4A6D33]/30">
-                    <div className="mb-2 text-sm font-semibold text-[#8B9D7D]">{event.date}</div>
-                    <h3 className="text-xl font-bold text-[#D4A72C]">{event.title}</h3>
-                  </div>
-                </div>
-
-                {/* Timeline dot */}
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {timelineEvents.map((event, index) => (
                 <motion.div
-                  className="absolute left-1/2 top-6 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-[#243420] shadow-md border border-[#D4A72C]"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: false, amount: 0.8 }}
-                  transition={{ type: "spring", stiffness: 300, delay: index * 0.2 + 0.3 }}
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, amount: 0.5 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  {event.icon}
+                  <div className="rounded-xl bg-gradient-to-br from-[#243420]/90 to-[#1A2614]/90 backdrop-blur-sm p-6 border border-[#4A6D33]/30 shadow-lg hover:shadow-xl transition-all duration-300 h-full group hover:translate-y-[-5px]">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#0F1A0A] shadow-lg border border-[#F3B939]/50 group-hover:border-[#F3B939] transition-colors duration-300">
+                        {event.icon}
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-[#F3B939] uppercase tracking-wider">{event.date}</div>
+                        <h3 className="text-xl font-bold text-white">{event.title}</h3>
+                      </div>
+                    </div>
+                    
+                    <p className="text-[#E5E1D6]/90 mt-3 leading-relaxed text-sm md:text-base">{event.description}</p>
+                  </div>
                 </motion.div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Trek Map */}
+        {/* Trek Details Card with Cost */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mx-auto max-w-4xl rounded-xl bg-[#243420]/80 backdrop-blur-sm p-6 shadow-xl border border-[#4A6D33]/30"
+          transition={{ duration: 0.8 }}
+          className="mx-auto max-w-4xl rounded-xl bg-gradient-to-br from-[#243420]/90 to-[#1A2614]/90 backdrop-blur-sm p-8 shadow-xl border border-[#4A6D33]/30 overflow-hidden relative mb-12"
         >
-          <h3 className="mb-4 font-serif text-2xl font-bold text-[#D4A72C]">Trek Location</h3>
-          <div className="relative h-[300px] w-full overflow-hidden rounded-lg bg-[#1A2614] md:h-[400px]">
-            <div className="absolute inset-0 bg-[url('/placeholder.svg?height=400&width=800')] bg-cover bg-center opacity-70"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="rounded-lg bg-[#0F1A0A]/80 backdrop-blur-sm p-4 text-center">
-                <MapPin className="mx-auto h-8 w-8 text-[#D4A72C]" />
-                <h4 className="mt-2 text-xl font-bold text-white">Sahyadri Mountains</h4>
-                <p className="text-[#E5E1D6]">Western Ghats, Maharashtra</p>
+          {/* Decorative elements */}
+          <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-[#F3B939]/5 blur-3xl"></div>
+          <div className="absolute -left-16 -top-16 w-48 h-48 rounded-full bg-[#F3B939]/5 blur-3xl"></div>
+
+          <h3 className="mb-6 text-2xl font-bold text-[#F3B939] relative z-10">Trek Details</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+            <div>
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <IndianRupee className="h-5 w-5 text-[#F3B939]" />
+                  <h4 className="font-bold text-[#F3B939] text-lg">Trek Fee</h4>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-white">₹850</span>
+                  <span className="text-[#E5E1D6]/80 text-sm">per person</span>
+                </div>
+                <p className="text-[#E5E1D6]/80 mt-2 text-sm">Includes transportation, equipment, guides, and basic refreshments</p>
+              </div>
+              
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <Info className="h-5 w-5 text-[#F3B939]" />
+                  <h4 className="font-bold text-[#F3B939] text-lg">What's Included</h4>
+                </div>
+                <ul className="text-[#E5E1D6] space-y-2">
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3B939]"></span>
+                    <span>Professional trek guides</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3B939]"></span>
+                    <span>Transportation to and from base camp</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3B939]"></span>
+                    <span>Safety equipment and first aid</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3B939]"></span>
+                    <span>Completion certificate</span>
+                  </li>
+                </ul>
               </div>
             </div>
-
-            {/* Map markers */}
-            <div className="absolute left-[30%] top-[40%] h-6 w-6 animate-pulse rounded-full bg-[#D4A72C]/50">
-              <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#D4A72C]"></div>
-            </div>
-            <div className="absolute left-[60%] top-[60%] h-6 w-6 animate-pulse rounded-full bg-[#D4A72C]/50">
-              <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#D4A72C]"></div>
+            
+            <div className="relative h-64 rounded-lg overflow-hidden">
+              <Image 
+                src="/images/sandhanvalley.png" 
+                alt="Sandhan Valley"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0F1A0A]/90 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-[#F3B939]" />
+                  <h4 className="text-xl font-bold text-white">Sandhan Valley</h4>
+                </div>
+                <p className="text-[#E5E1D6]/90 text-sm">Western Ghats, Maharashtra</p>
+              </div>
             </div>
           </div>
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
+          
+          <div className="mt-8 grid gap-4 md:grid-cols-3 relative z-10">
             <motion.div
-              className="rounded-lg bg-[#1A2614]/80 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
+              className="rounded-lg bg-[#0F1A0A]/50 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, amount: 0.8 }}
-              transition={{ duration: 0.4, delay: 0.6 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
             >
-              <h4 className="font-bold text-[#D4A72C]">Difficulty</h4>
+              <h4 className="font-bold text-[#F3B939]">Difficulty</h4>
               <p className="text-[#E5E1D6]">Moderate</p>
             </motion.div>
             <motion.div
-              className="rounded-lg bg-[#1A2614]/80 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
+              className="rounded-lg bg-[#0F1A0A]/50 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, amount: 0.8 }}
-              transition={{ duration: 0.4, delay: 0.7 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
             >
-              <h4 className="font-bold text-[#D4A72C]">Distance</h4>
+              <h4 className="font-bold text-[#F3B939]">Distance</h4>
               <p className="text-[#E5E1D6]">12 km</p>
             </motion.div>
             <motion.div
-              className="rounded-lg bg-[#1A2614]/80 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
+              className="rounded-lg bg-[#0F1A0A]/50 backdrop-blur-sm p-4 text-center border border-[#4A6D33]/30"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, amount: 0.8 }}
-              transition={{ duration: 0.4, delay: 0.8 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
             >
-              <h4 className="font-bold text-[#D4A72C]">Elevation</h4>
+              <h4 className="font-bold text-[#F3B939]">Elevation</h4>
               <p className="text-[#E5E1D6]">1,200 m</p>
             </motion.div>
+          </div>
+          
+          <div className="text-center mt-8 relative z-10">
+            <a 
+              href="/register" 
+              className="inline-block px-8 py-3 bg-[#F3B939] hover:bg-amber-500 text-[#0A1508] font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-amber-400/30 hover:scale-105"
+            >
+              Register Now
+            </a>
           </div>
         </motion.div>
       </div>

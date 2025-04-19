@@ -86,7 +86,7 @@ export default function Navigation() {
   }
 
   return (
-    <motion.header 
+    <motion.header
       ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? "bg-[#0F1A0A]/90 shadow-lg backdrop-blur-md py-2" : "py-4"
@@ -117,10 +117,10 @@ export default function Navigation() {
                   height={40}
                   className={`transition-all duration-300 ${isScrolled ? "opacity-100" : "opacity-90"}`}
                 />
-                <motion.div
+              <motion.div
                   className="absolute inset-0"
                   animate={{ rotate: 360 }}
-                  transition={{ 
+                transition={{ 
                     duration: 15, 
                     ease: "linear",
                     repeat: Infinity 
@@ -128,7 +128,7 @@ export default function Navigation() {
                 >
                   <div className="absolute top-1 left-1/2 w-1 h-1 bg-[#F3B939] rounded-full transform -translate-x-1/2" />
                 </motion.div>
-              </div>
+                  </div>
               <span className="font-display treasure-heading font-bold text-[#F3B939] text-2xl tracking-wide hidden md:block">
                 FOOTSLOG
               </span>
@@ -140,7 +140,7 @@ export default function Navigation() {
             {navLinks.map((link) => (
               <Link
                 key={link.label}
-                href={link.href}
+                  href={link.href}
                 onClick={(e) => handleLinkClick(e, link.href)}
                 className={`group relative flex flex-col items-center transition-colors duration-300 ${
                   isActive(link.href) 
@@ -159,14 +159,14 @@ export default function Navigation() {
                       : "w-0 group-hover:w-full"
                   }`} 
                 />
-              </Link>
+                </Link>
             ))}
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
-              onClick={toggleMenu}
+            onClick={toggleMenu}
               className="text-[#E5E1D6] hover:text-[#F3B939] p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#F3B939]"
               aria-label="Toggle menu"
             >
@@ -183,7 +183,7 @@ export default function Navigation() {
       {/* Mobile menu */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
+      <motion.div
             className="md:hidden absolute top-full left-0 right-0 bg-[#0F1A0A]/95 backdrop-blur-md"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -208,9 +208,9 @@ export default function Navigation() {
                   <span className="mr-3">{link.icon}</span>
                   {link.label}
                 </Link>
-              ))}
+            ))}
             </div>
-          </motion.div>
+      </motion.div>
         )}
       </AnimatePresence>
     </motion.header>

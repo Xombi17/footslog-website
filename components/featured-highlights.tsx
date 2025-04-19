@@ -12,7 +12,7 @@ export default function FeaturedHighlights() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   
   useEffect(() => {
-    const targetDate = new Date("2024-07-27T05:30:00").getTime()
+    const targetDate = new Date("2025-06-07T05:30:00").getTime()
     
     const updateTimer = () => {
       const now = new Date().getTime()
@@ -58,7 +58,7 @@ export default function FeaturedHighlights() {
                 Countdown to Adventure
               </h3>
               <p className="text-center text-white text-xl mb-10">
-                July 27, 2024 • Kothaligad Trek
+                June 7, 2025 • Sandhan Valley Trek
               </p>
               
               <div className="flex flex-wrap justify-center gap-8">
@@ -113,7 +113,7 @@ export default function FeaturedHighlights() {
           <div className="relative h-[450px] rounded-2xl overflow-hidden shadow-2xl animate-on-scroll">
             <Image 
               src="/images/sandhanvalley.png"
-              alt="Trek Adventure"
+              alt="Sandhan Valley Trek"
               fill
               className="object-cover"
             />
@@ -127,7 +127,7 @@ export default function FeaturedHighlights() {
                 FOOTSLOG is the annual trekking adventure organized by the Rotaract Club of FRCRCE. Inspired by the timeless tale of The Jungle Book, we invite you to explore the untamed wilderness, discover hidden paths, and connect with nature in its purest form.
               </p>
               <p className="text-lg md:text-xl leading-relaxed">
-                Our carefully curated trek routes offer breathtaking views, challenging trails, and unforgettable experiences. Whether you're a seasoned trekker or a first-timer, FOOTSLOG promises an adventure that will awaken your spirit of exploration.
+                Our carefully curated trek to Sandhan Valley offers breathtaking views, challenging trails, and unforgettable experiences. Whether you're a seasoned trekker or a first-timer, FOOTSLOG promises an adventure that will awaken your spirit of exploration.
               </p>
             </div>
 

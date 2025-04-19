@@ -7,7 +7,7 @@ export default function CountdownBanner() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   
   useEffect(() => {
-    const targetDate = new Date("2024-07-27T05:30:00").getTime()
+    const targetDate = new Date("2025-06-07T05:30:00").getTime()
     
     const updateTimer = () => {
       const now = new Date().getTime()
@@ -40,7 +40,7 @@ export default function CountdownBanner() {
               Countdown to Adventure
             </h3>
             <p className="text-center text-white text-xl mb-10">
-              July 27, 2024 • Kothaligad Trek
+              June 7, 2025 • Sandhan Valley Trek
             </p>
             
             <div className="flex flex-wrap justify-center gap-8">

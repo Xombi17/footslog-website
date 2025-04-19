@@ -7,28 +7,60 @@ import Image from "next/image"
 
 const timelineEvents = [
   {
-    date: "October 15, 2023",
+    date: "May 1, 2025",
     title: "Registration Opens",
     description: "Register early to secure your spot for this exciting adventure! Limited seats available.",
     icon: <Calendar className="h-6 w-6 text-[#F3B939]" />,
   },
   {
-    date: "November 5, 2023",
+    date: "May 25, 2025",
     title: "Pre-Trek Briefing",
     description: "Gather for an essential briefing on trek details, safety guidelines, and equipment checklist.",
     icon: <Users className="h-6 w-6 text-[#F3B939]" />,
   },
   {
-    date: "November 18-20, 2023",
+    date: "June 7, 2025",
     title: "Footslog Trek",
-    description: "The main event! Three days of adventure through the breathtaking Sandhan Valley.",
+    description: "The main event! An unforgettable adventure through the breathtaking Sandhan Valley.",
     icon: <Mountain className="h-6 w-6 text-[#F3B939]" />,
   },
   {
-    date: "November 25, 2023",
+    date: "June 14, 2025",
     title: "Photo Sharing & Certificates",
     description: "Celebrate your achievement! Share photos and receive your completion certificates.",
     icon: <Droplets className="h-6 w-6 text-[#F3B939]" />,
+  },
+]
+
+// Trek events data
+const trekEvents = [
+  {
+    title: "Sandhan Valley Trek",
+    description: "A thrilling trek through the Valley of Shadows",
+    date: "June 7, 2025",
+    difficulty: "Moderate",
+    price: "₹850"
+  },
+  {
+    title: "Kalavantin Durg Trek",
+    description: "Climb the 'Climb to Heaven' fortress",
+    date: "May 24, 2025",
+    difficulty: "Challenging",
+    price: "₹950"
+  },
+  {
+    title: "Rajmachi Trek",
+    description: "3-day trek with camping under the stars",
+    date: "May 10-12, 2025",
+    difficulty: "Moderate",
+    price: "₹1,250"
+  },
+  {
+    title: "Harishchandragad Trek",
+    description: "Explore ancient caves and breathtaking views",
+    date: "April 27, 2025",
+    difficulty: "Moderate-Hard",
+    price: "₹1,100"
   },
 ]
 

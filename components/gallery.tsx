@@ -19,7 +19,7 @@ const naturalWonders = [
   {
     name: "Firefly Magic",
     description: "During pre-monsoon months, witness the magical spectacle of thousands of fireflies illuminating the valley with their synchronous flashing, creating a natural light show in the forest.",
-    stats: { bestTime: "May-June", duration: "Evening hours", highlight: "Synchronous flashing" },
+    stats: { bestTime: "May-June 2025", duration: "Evening hours", highlight: "Synchronous flashing" },
     image: "/images/sandhanvalley.png",
   },
   {

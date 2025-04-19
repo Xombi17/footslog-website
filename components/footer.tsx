@@ -108,7 +108,7 @@ export default function Footer() {
             
             <div className="mt-6">
               <p className="font-medium text-[#D4A72C]">Event Dates</p>
-              <p className="text-[#E5E1D6]/80">November 18-20, 2023</p>
+              <p className="text-[#E5E1D6]/80">June 7, 2025</p>
             </div>
           </div>
         </div>

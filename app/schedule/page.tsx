@@ -12,7 +12,7 @@ export default function SchedulePage() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   
   useEffect(() => {
-    const targetDate = new Date("2024-07-27T05:30:00").getTime()
+    const targetDate = new Date("2025-06-07T05:30:00").getTime()
     
     const updateTimer = () => {
       const now = new Date().getTime()
@@ -54,7 +54,7 @@ export default function SchedulePage() {
                 Trek Itinerary
               </h1>
               <p className="text-white/90 text-lg md:text-xl max-w-3xl mx-auto">
-                Your adventure to Kothaligad awaits - Here&apos;s the day&apos;s journey
+                Your adventure to Sandhan Valley awaits - Here&apos;s the day&apos;s journey
               </p>
             </div>
           </div>
@@ -70,15 +70,15 @@ export default function SchedulePage() {
                 <div className="text-center mb-8">
                   <h2 className="text-3xl md:text-4xl font-bold text-amber-400 mb-4 treasure-heading">The Adventure Awaits</h2>
                   <p className="text-amber-100 max-w-2xl mx-auto">
-                    Mark your calendars for our trek to Kothaligad. The countdown has begun!
+                    Mark your calendars for our trek to Sandhan Valley. The countdown has begun!
                   </p>
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-8">
                   <div className="text-center md:text-left">
-                    <h3 className="text-xl font-bold text-amber-300 mb-2">FOOTSLOG 2024</h3>
-                    <p className="text-amber-100">July 27, 2024</p>
-                    <p className="text-amber-100">Kothaligad, Maharashtra</p>
+                    <h3 className="text-xl font-bold text-amber-300 mb-2">FOOTSLOG 2025</h3>
+                    <p className="text-amber-100">June 7, 2025</p>
+                    <p className="text-amber-100">Sandhan Valley, Maharashtra</p>
                     <a 
                       href="/register" 
                       className="mt-6 px-6 py-2 bg-amber-500 hover:bg-amber-600 text-green-950 font-bold rounded-md transition-colors duration-300 inline-block"
@@ -176,10 +176,10 @@ export default function SchedulePage() {
                         { time: "6:00 AM", event: "DEPARTURE FROM COLLEGE" },
                         { time: "9:00 AM", event: "REACH BASE VILLAGE" },
                         { time: "9:15 AM", event: "START ASCEND" },
-                        { time: "11:15 AM", event: "REACH THE TOP OF KOTHALIGAD" },
+                        { time: "11:15 AM", event: "REACH THE TOP OF SANDHAN VALLEY" },
                         { time: "12:00 PM", event: "START DESCEND" },
                         { time: "2:00 PM", event: "REACH BASE VILLAGE" },
-                        { time: "2:45 PM", event: "DEPARTURE FROM KOTHALIGAD" },
+                        { time: "2:45 PM", event: "DEPARTURE FROM SANDHAN VALLEY" },
                         { time: "4:00 PM", event: "HALT FOR LUNCH AT A RESTAURANT" },
                         { time: "5:30 PM", event: "HEAD TO BANDRA STATION" },
                         { time: "8:30 PM", event: "REACH BANDRA STATION" },
@@ -237,7 +237,7 @@ export default function SchedulePage() {
                 {/* Trek Date */}
                 <div className="flex justify-center mt-8">
                   <div className="bg-[#113907]/70 backdrop-blur-sm px-6 py-3 rounded-full border border-[#D4A72C]">
-                    <p className="text-white font-bold text-xl">27 July 2024</p>
+                    <p className="text-white font-bold text-xl">7 June 2025</p>
                   </div>
                 </div>
                 

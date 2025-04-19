@@ -35,15 +35,15 @@ export default function CountdownSection() {
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-amber-400 mb-4 treasure-heading">The Adventure Awaits</h2>
             <p className="text-amber-100 max-w-2xl mx-auto">
-              Mark your calendars for our trek to Kothaligad. The countdown has begun!
+              Mark your calendars for our trek to Sandhan Valley. The countdown has begun!
             </p>
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-8">
             <div className="text-center md:text-left">
-              <h3 className="text-xl font-bold text-amber-300 mb-2">FOOTSLOG 2024</h3>
-              <p className="text-amber-100">July 27, 2024</p>
-              <p className="text-amber-100">Kothaligad, Maharashtra</p>
+              <h3 className="text-xl font-bold text-amber-300 mb-2">FOOTSLOG 2025</h3>
+              <p className="text-amber-100">June 7, 2025</p>
+              <p className="text-amber-100">Sandhan Valley, Maharashtra</p>
               <a 
                 href="/register" 
                 className="mt-6 px-6 py-2 bg-amber-500 hover:bg-amber-600 text-green-950 font-bold rounded-md transition-colors duration-300 inline-block"
@@ -53,7 +53,7 @@ export default function CountdownSection() {
             </div>
 
             <div className="md:border-l md:border-green-700 md:pl-8 py-4">
-              <CountdownTimer targetDate={new Date("2024-07-27T05:30:00")} className="scale-110 md:scale-125" />
+              <CountdownTimer targetDate={new Date("2025-06-07T05:30:00")} className="scale-110 md:scale-125" />
             </div>
           </div>
         </motion.div>

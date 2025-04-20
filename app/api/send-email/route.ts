@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import sgMail from '@sendgrid/mail';
 import { supabase } from '@/lib/supabase';
 
-// Initialize SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
+// Initialize SendGrid with error checking
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+if (!SENDGRID_API_KEY) {
+  console.error('SendGrid API key is not configured');
+}
+sgMail.setApiKey(SENDGRID_API_KEY || '');
 
 // CORS Middleware helper
 const corsHeaders = () => ({
@@ -21,10 +25,22 @@ export async function POST(request: NextRequest) {
   try {
     const { to, subject, body, ticketId } = await request.json();
 
+    // Validate required fields
     if (!to || !subject || !body) {
+      console.error('Missing required fields:', { to, subject, bodyLength: body?.length });
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
+      );
+    }
+
+    // Validate email configuration
+    const fromEmail = process.env.EMAIL_FROM;
+    if (!fromEmail) {
+      console.error('EMAIL_FROM is not configured');
+      return NextResponse.json(
+        { error: 'Email configuration error' },
+        { status: 500 }
       );
     }
 
@@ -65,16 +81,25 @@ export async function POST(request: NextRequest) {
       </div>
     `;
 
-    // Send email using SendGrid
+    // Prepare email message
     const msg = {
       to,
-      from: process.env.EMAIL_FROM || 'noreply@footslog.com',
+      from: fromEmail,
       subject,
       text: body,
       html: htmlBody,
     };
 
-    await sgMail.send(msg);
+    console.log('Attempting to send email to:', to);
+    
+    try {
+      // Send email using SendGrid
+      await sgMail.send(msg);
+      console.log('Email sent successfully to:', to);
+    } catch (sendError: any) {
+      console.error('SendGrid error:', sendError?.response?.body || sendError);
+      throw new Error(sendError?.response?.body?.errors?.[0]?.message || 'Failed to send email');
+    }
 
     // Log the email in Supabase
     const { error: logError } = await supabase
@@ -94,12 +119,20 @@ export async function POST(request: NextRequest) {
       console.error('Error logging email:', logError);
     }
 
-    return NextResponse.json({ success: true }, { headers: corsHeaders() });
-  } catch (error) {
-    console.error('Error sending email:', error);
+    return NextResponse.json({ 
+      success: true,
+      message: 'Email sent successfully'
+    }, { 
+      headers: corsHeaders() 
+    });
+  } catch (error: any) {
+    console.error('Error in email route:', error);
     return NextResponse.json(
-      { error: 'Failed to send email' },
-      { status: 500 }
+      { 
+        error: 'Failed to send email',
+        details: error.message 
+      },
+      { status: 500, headers: corsHeaders() }
     );
   }
 } 

@@ -163,8 +163,8 @@ export default function RegistrationForm() {
 
       if (error) throw error;
 
-      // Send confirmation email
-      const emailResponse = await fetch('/api/send-email', {
+      // Send confirmation email with timeout
+      const emailPromise = fetch('/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -201,8 +201,24 @@ export default function RegistrationForm() {
         }),
       });
 
-      if (!emailResponse.ok) {
-        throw new Error('Failed to send confirmation email');
+      // Set a timeout for the email request
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Email request timed out')), 10000);
+      });
+
+      try {
+        const emailResponse = await Promise.race([emailPromise, timeoutPromise]);
+        if (!emailResponse || !('ok' in emailResponse) || !emailResponse.ok) {
+          throw new Error('Failed to send confirmation email');
+        }
+      } catch (emailError) {
+        console.error('Email error:', emailError);
+        // Continue with registration even if email fails
+        toast({
+          title: "Registration Successful",
+          description: "Registration completed, but we couldn't send the confirmation email. Please proceed with payment.",
+          variant: "warning",
+        });
       }
 
       // Save registration data to localStorage with the UUID
@@ -213,17 +229,18 @@ export default function RegistrationForm() {
       toast({
         title: "Registration Submitted!",
         description: "Please complete the payment to finalize your registration.",
-      })
+      });
     } catch (error) {
       console.error('Registration error:', error);
       setError(error instanceof Error ? error.message : 'Failed to complete registration');
-      setIsSubmitting(false);
       
       toast({
         title: "Registration Failed",
         description: error instanceof Error ? error.message : "There was an error processing your registration. Please try again.",
         variant: "destructive",
-      })
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   }
   
@@ -274,30 +291,30 @@ export default function RegistrationForm() {
         }
         
         setPaymentComplete(true)
-        setIsSubmitting(false)
+      setIsSubmitting(false)
         setCurrentStep('ticket')
-        
+      
         // Trigger confetti effect on successful payment
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        })
-        
-        toast({
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      })
+      
+      toast({
           title: "Payment Successful!",
           description: "Your trek ticket has been generated. See you on the adventure!",
-        })
-      } catch (error) {
+      })
+    } catch (error) {
         console.error('Payment update error:', error);
         setIsSubmitting(false);
-        
-        toast({
+      
+      toast({
           title: "Payment Processing Error",
           description: "Your payment was processed but we couldn't update our records. Please contact support.",
-          variant: "destructive",
-        })
-      }
+        variant: "destructive",
+      })
+    }
     }, 2000)
   }
   
@@ -717,98 +734,98 @@ export default function RegistrationForm() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     {/* Personal Information Section */}
                     <div className="mb-6">
                       <h3 className="text-[#D4A72C] font-medium mb-4 border-b border-[#4A6D33]/30 pb-2">Personal Information</h3>
                       
-                      <div className="grid gap-6 md:grid-cols-2">
-                        <FormField
-                          control={form.control}
+                <div className="grid gap-6 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
                           name="fullName"
-                          render={({ field }) => (
-                            <FormItem>
+                    render={({ field }) => (
+                      <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Full Name</FormLabel>
-                              <FormControl>
-                                <Input
+                        <FormControl>
+                          <Input
                                   placeholder="Enter your full name"
-                                  {...field}
-                                  className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            {...field}
+                            className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                        <FormField
-                          control={form.control}
+                  <FormField
+                    control={form.control}
                           name="age"
-                          render={({ field }) => (
-                            <FormItem>
+                    render={({ field }) => (
+                      <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Age</FormLabel>
-                              <FormControl>
-                                <Input
+                        <FormControl>
+                          <Input
                                   placeholder="Enter your age"
-                                  {...field}
-                                  className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+                            {...field}
+                            className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                       <div className="grid gap-6 md:grid-cols-2 mt-6">
-                        <FormField
-                          control={form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-[#E5E1D6]">Email</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="email"
-                                  placeholder="Enter your email"
-                                  {...field}
-                                  className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#E5E1D6]">Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="Enter your email"
+                            {...field}
+                            className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                        <FormField
-                          control={form.control}
-                          name="phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-[#E5E1D6]">Phone Number</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter your phone number"
-                                  {...field}
-                                  className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#E5E1D6]">Phone Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your phone number"
+                            {...field}
+                            className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
                       <div className="grid gap-6 md:grid-cols-2 mt-6">
-                        <FormField
-                          control={form.control}
+                <FormField
+                  control={form.control}
                           name="gender"
-                          render={({ field }) => (
-                            <FormItem>
+                  render={({ field }) => (
+                    <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Gender</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
+                      <FormControl>
                                   <SelectTrigger className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus:ring-[#D4A72C]">
                                     <SelectValue placeholder="Select your gender" />
                                   </SelectTrigger>
@@ -832,11 +849,11 @@ export default function RegistrationForm() {
                             <FormItem>
                               <FormLabel className="text-[#E5E1D6]">T-Shirt Size</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
+                            <FormControl>
                                   <SelectTrigger className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus:ring-[#D4A72C]">
                                     <SelectValue placeholder="Select your t-shirt size" />
                                   </SelectTrigger>
-                                </FormControl>
+                            </FormControl>
                                 <SelectContent className="bg-[#1A2614] text-[#E5E1D6]">
                                   <SelectItem value="XS">XS</SelectItem>
                                   <SelectItem value="S">S</SelectItem>
@@ -847,7 +864,7 @@ export default function RegistrationForm() {
                                 </SelectContent>
                               </Select>
                               <FormMessage />
-                            </FormItem>
+                          </FormItem>
                           )}
                         />
                       </div>
@@ -865,11 +882,11 @@ export default function RegistrationForm() {
                             <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Fitness Level</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
+                            <FormControl>
                                   <SelectTrigger className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus:ring-[#D4A72C]">
                                     <SelectValue placeholder="Select your fitness level" />
                                   </SelectTrigger>
-                                </FormControl>
+                            </FormControl>
                                 <SelectContent className="bg-[#1A2614] text-[#E5E1D6]">
                                   <SelectItem value="sedentary">Sedentary (little exercise)</SelectItem>
                                   <SelectItem value="light">Light activity (1-3 days/week)</SelectItem>
@@ -879,7 +896,7 @@ export default function RegistrationForm() {
                                 </SelectContent>
                               </Select>
                               <FormMessage />
-                            </FormItem>
+                          </FormItem>
                           )}
                         />
                         
@@ -890,11 +907,11 @@ export default function RegistrationForm() {
                             <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Trekking Experience</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
+                            <FormControl>
                                   <SelectTrigger className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus:ring-[#D4A72C]">
                                     <SelectValue placeholder="Select your experience level" />
                                   </SelectTrigger>
-                                </FormControl>
+                            </FormControl>
                                 <SelectContent className="bg-[#1A2614] text-[#E5E1D6]">
                                   <SelectItem value="beginner">Beginner (First time trekker)</SelectItem>
                                   <SelectItem value="novice">Novice (1-2 previous treks)</SelectItem>
@@ -904,7 +921,7 @@ export default function RegistrationForm() {
                                 </SelectContent>
                               </Select>
                               <FormMessage />
-                            </FormItem>
+                          </FormItem>
                           )}
                         />
                       </div>
@@ -922,42 +939,42 @@ export default function RegistrationForm() {
                                   {...field}
                                   className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
                                 />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                           name="weight"
-                          render={({ field }) => (
-                            <FormItem>
+                  render={({ field }) => (
+                    <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Weight (kg)</FormLabel>
-                              <FormControl>
+                      <FormControl>
                                 <Input
                                   placeholder="Enter your weight in kg"
-                                  {...field}
+                          {...field}
                                   className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                       </div>
                     </div>
 
                     {/* Emergency Contact Section */}
                     <div className="mb-6">
                       <h3 className="text-[#D4A72C] font-medium mb-4 border-b border-[#4A6D33]/30 pb-2">Emergency Contact</h3>
-                      
-                      <div className="grid gap-6 md:grid-cols-2">
-                        <FormField
-                          control={form.control}
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
                           name="emergencyContact.name"
-                          render={({ field }) => (
-                            <FormItem>
+                    render={({ field }) => (
+                      <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Contact Name</FormLabel>
                               <FormControl>
                                 <Input
@@ -995,127 +1012,127 @@ export default function RegistrationForm() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Relationship</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus:ring-[#D4A72C]">
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus:ring-[#D4A72C]">
                                     <SelectValue placeholder="Select relationship" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent className="bg-[#1A2614] text-[#E5E1D6]">
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="bg-[#1A2614] text-[#E5E1D6]">
                                   <SelectItem value="parent">Parent</SelectItem>
                                   <SelectItem value="spouse">Spouse</SelectItem>
                                   <SelectItem value="sibling">Sibling</SelectItem>
                                   <SelectItem value="relative">Other Relative</SelectItem>
                                   <SelectItem value="friend">Friend</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                       </div>
                     </div>
                     
                     {/* Health & Preferences Section */}
                     <div className="mb-6">
                       <h3 className="text-[#D4A72C] font-medium mb-4 border-b border-[#4A6D33]/30 pb-2">Health & Preferences</h3>
-
-                      <FormField
-                        control={form.control}
+                  
+                  <FormField
+                    control={form.control}
                         name="medicalInfo"
-                        render={({ field }) => (
-                          <FormItem>
+                    render={({ field }) => (
+                      <FormItem>
                             <FormLabel className="text-[#E5E1D6]">Medical Information</FormLabel>
-                            <FormControl>
+                        <FormControl>
                               <Textarea
                                 placeholder="Please mention any medical conditions, allergies, medications, or special requirements"
-                                {...field}
+                            {...field}
                                 className="min-h-[100px] border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
-                              />
-                            </FormControl>
+                          />
+                        </FormControl>
                             <FormDescription className="text-[#8B9D7D]">
                               This information helps us ensure your safety during the trek.
                             </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                
                       <div className="mt-6">
-                        <FormField
-                          control={form.control}
-                          name="dietaryRestrictions"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-[#E5E1D6]">Dietary Restrictions</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Please mention any dietary requirements or restrictions"
-                                  {...field}
-                                  className="min-h-[80px] border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
-                                />
-                              </FormControl>
-                              <FormDescription className="text-[#8B9D7D]">
-                                This helps us prepare appropriate meal options during the trek.
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
+                <FormField
+                  control={form.control}
+                  name="dietaryRestrictions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#E5E1D6]">Dietary Restrictions</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Please mention any dietary requirements or restrictions"
+                          {...field}
+                          className="min-h-[80px] border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
                         />
+                      </FormControl>
+                      <FormDescription className="text-[#8B9D7D]">
+                                This helps us prepare appropriate meal options during the trek.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                       </div>
-                      
+
                       <div className="mt-6">
-                        <FormField
-                          control={form.control}
+                <FormField
+                  control={form.control}
                           name="equipmentNeeds"
-                          render={({ field }) => (
-                            <FormItem>
+                  render={({ field }) => (
+                    <FormItem>
                               <FormLabel className="text-[#E5E1D6]">Equipment Needs</FormLabel>
-                              <FormControl>
-                                <Textarea
+                      <FormControl>
+                        <Textarea
                                   placeholder="List any equipment you need to borrow or rent for the trek"
-                                  {...field}
+                          {...field}
                                   className="min-h-[80px] border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
-                                />
-                              </FormControl>
+                        />
+                      </FormControl>
                               <FormDescription className="text-[#8B9D7D]">
                                 We can provide limited equipment for participants who need it.
                               </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                       </div>
                     </div>
                     
                     {/* Additional Information */}
                     <div className="mb-6">
                       <h3 className="text-[#D4A72C] font-medium mb-4 border-b border-[#4A6D33]/30 pb-2">Additional Information</h3>
-                      
-                      <FormField
-                        control={form.control}
-                        name="howHeard"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-[#E5E1D6]">How did you hear about Footslog?</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus:ring-[#D4A72C]">
-                                  <SelectValue placeholder="Select an option" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="bg-[#1A2614] text-[#E5E1D6]">
-                                <SelectItem value="social_media">Social Media</SelectItem>
-                                <SelectItem value="friends">Friends/Family</SelectItem>
-                                <SelectItem value="college">College/Campus</SelectItem>
-                                <SelectItem value="previous_event">Previous Rotaract Events</SelectItem>
-                                <SelectItem value="other">Other</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                
+                <FormField
+                  control={form.control}
+                  name="howHeard"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#E5E1D6]">How did you hear about Footslog?</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus:ring-[#D4A72C]">
+                            <SelectValue placeholder="Select an option" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-[#1A2614] text-[#E5E1D6]">
+                          <SelectItem value="social_media">Social Media</SelectItem>
+                          <SelectItem value="friends">Friends/Family</SelectItem>
+                          <SelectItem value="college">College/Campus</SelectItem>
+                          <SelectItem value="previous_event">Previous Rotaract Events</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                       
                       <div className="mt-6">
                         <FormField
@@ -1138,67 +1155,67 @@ export default function RegistrationForm() {
                       </div>
                     </div>
 
-                    <FormField
-                      control={form.control}
-                      name="termsAccepted"
-                      render={({ field }) => (
+                <FormField
+                  control={form.control}
+                  name="termsAccepted"
+                  render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 shadow border border-[#4A6D33]/30 bg-[#1A2614]/30">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              className="border-[#D4A72C] data-[state=checked]:bg-[#D4A72C] data-[state=checked]:text-[#0F1A0A]"
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-[#E5E1D6]">
-                              I agree to the{" "}
-                              <a href="#" className="text-[#D4A72C] underline hover:text-[#C69A28]">
-                                terms and conditions
-                              </a>{" "}
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="border-[#D4A72C] data-[state=checked]:bg-[#D4A72C] data-[state=checked]:text-[#0F1A0A]"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-[#E5E1D6]">
+                          I agree to the{" "}
+                          <a href="#" className="text-[#D4A72C] underline hover:text-[#C69A28]">
+                            terms and conditions
+                          </a>{" "}
                               and acknowledge the risks associated with trekking activities. I confirm that I am physically fit to participate in this trek and have provided accurate information.
-                            </FormLabel>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
+                        </FormLabel>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full bg-[#D4A72C] text-[#0F1A0A] hover:bg-[#C69A28] disabled:opacity-70"
-                    >
-                      {isSubmitting ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <svg
-                            className="h-5 w-5 animate-spin"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                          Processing...
-                        </span>
-                      ) : (
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-[#D4A72C] text-[#0F1A0A] hover:bg-[#C69A28] disabled:opacity-70"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg
+                        className="h-5 w-5 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Processing...
+                    </span>
+                  ) : (
                         "Register for Trek"
-                      )}
-                    </Button>
-                  </form>
-                </Form>
+                  )}
+                </Button>
+              </form>
+            </Form>
               </motion.div>
             )}
 

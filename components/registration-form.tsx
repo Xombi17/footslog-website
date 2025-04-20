@@ -14,8 +14,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useToast } from "@/hooks/use-toast"
 import confetti from 'canvas-confetti'
-import { QRCodeSVG } from 'react-qr-code'
+import QRCode from 'react-qr-code'
 import { supabase } from '@/lib/supabase'
+import { v4 as uuidv4 } from 'uuid'
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
@@ -42,6 +43,35 @@ const formSchema = z.object({
     message: "You must accept the terms and conditions.",
   }),
 })
+
+// Add this interface for payment methods
+interface PaymentMethod {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+}
+
+const paymentMethods: PaymentMethod[] = [
+  {
+    id: 'upi',
+    name: 'UPI',
+    icon: '💸',
+    description: 'Pay with any UPI app (Google Pay, PhonePe, etc.)'
+  },
+  {
+    id: 'card',
+    name: 'Credit/Debit Card',
+    icon: '💳',
+    description: 'Pay with your card securely'
+  },
+  {
+    id: 'netbanking',
+    name: 'Net Banking',
+    icon: '🏦',
+    description: 'Pay directly from your bank account'
+  }
+];
 
 export default function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -111,11 +141,15 @@ export default function RegistrationForm() {
     setIsSubmitting(true)
 
     try {
+      // Generate a proper UUID
+      const registrationId = uuidv4();
+      
       // Save registration data to Supabase
       const { data, error } = await supabase
         .from('simple_registrations')
         .insert([
           {
+            id: registrationId,
             email: values.email,
             full_name: values.fullName,
             data: values,
@@ -147,7 +181,7 @@ export default function RegistrationForm() {
             - Name: ${values.fullName}
             - Email: ${values.email}
             - Phone: ${values.phone}
-            - Emergency Contact: ${values.emergencyContact}
+            - Emergency Contact: ${values.emergencyContact.name}
             - Emergency Phone: ${values.emergencyContact.phone}
             - Age: ${values.age}
             - Gender: ${values.gender}
@@ -171,8 +205,8 @@ export default function RegistrationForm() {
         throw new Error('Failed to send confirmation email');
       }
 
-      // Save registration data to localStorage
-      localStorage.setItem('registrationData', JSON.stringify(values));
+      // Save registration data to localStorage with the UUID
+      localStorage.setItem('footslog_registration', JSON.stringify({ ...values, id: registrationId }));
       setRegistrationData(values);
       setCurrentStep('payment');
       
@@ -292,7 +326,7 @@ export default function RegistrationForm() {
         
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/3 flex justify-center items-center p-4 bg-white rounded-lg">
-            <QRCodeSVG 
+            <QRCode 
               value={`FOOTSLOG-TREK-${ticketId}`}
               size={150}
               bgColor={"#ffffff"}
@@ -372,8 +406,105 @@ export default function RegistrationForm() {
   
   // Payment component shown after form submission
   const PaymentComponent = () => {
-    if (!registrationData) return null
-    
+    const [selectedMethod, setSelectedMethod] = useState<string>('');
+    const [paymentDetails, setPaymentDetails] = useState({
+      upiId: '',
+      cardNumber: '',
+      expiry: '',
+      cvv: '',
+      bankName: ''
+    });
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    const handlePaymentSubmit = async () => {
+      setIsProcessing(true);
+      
+      try {
+        // Simulate payment processing delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Generate a unique ticket ID
+        const ticketId = `FSLOG-${Date.now().toString().slice(-6)}`;
+        
+        // Update payment status in Supabase
+        const { error } = await supabase
+          .from('simple_registrations')
+          .update({ 
+            payment_status: 'completed',
+            ticket_id: ticketId,
+            updated_at: new Date().toISOString()
+          })
+          .eq('email', registrationData?.email);
+
+        if (error) throw error;
+
+        // Send ticket email
+        const emailResponse = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: registrationData?.email,
+            subject: 'Your Trek Ticket - Footslog',
+            body: `
+              Dear ${registrationData?.fullName},
+
+              Thank you for completing your registration! Your payment has been received and your spot is confirmed.
+
+              Here's your ticket for the Footslog Trek:
+
+              Ticket ID: ${ticketId}
+              Name: ${registrationData?.fullName}
+              Email: ${registrationData?.email}
+
+              Please show this QR code at the event check-in:
+
+              [QR Code will be displayed here]
+
+              Important Information:
+              - Please arrive 30 minutes before the scheduled start time
+              - Bring a valid ID for verification
+              - Carry all necessary equipment as mentioned in your registration
+              - In case of any medical conditions, please bring your medications
+
+              If you have any questions, please contact us at support@footslog.com
+
+              We look forward to seeing you at the trek!
+
+              Best regards,
+              Footslog Team
+            `,
+            ticketId: ticketId
+          }),
+        });
+
+        if (!emailResponse.ok) {
+          throw new Error('Failed to send ticket email');
+        }
+
+        // Trigger confetti effect
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+
+        // Move to ticket view
+        setTicketId(ticketId);
+        setCurrentStep('ticket');
+      } catch (error) {
+        console.error('Payment error:', error);
+        toast({
+          title: "Payment Failed",
+          description: "There was an error processing your payment. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
     return (
       <div className="rounded-lg bg-[#2A3B22]/80 backdrop-blur-sm p-6 border border-[#4A6D33]/30">
         <div className="text-center mb-6">
@@ -386,15 +517,15 @@ export default function RegistrationForm() {
           <ul className="space-y-2 text-[#E5E1D6]">
             <li className="flex justify-between">
               <span>Participant:</span>
-              <span className="font-medium">{registrationData.fullName}</span>
+              <span className="font-medium">{registrationData?.fullName}</span>
             </li>
             <li className="flex justify-between">
               <span>Trek Experience:</span>
-              <span>{registrationData.trekExperience}</span>
+              <span>{registrationData?.trekExperience}</span>
             </li>
             <li className="flex justify-between">
               <span>T-Shirt Size:</span>
-              <span>{registrationData.tShirtSize}</span>
+              <span>{registrationData?.tShirtSize}</span>
             </li>
             <li className="border-t border-[#4A6D33]/30 mt-3 pt-3 flex justify-between font-medium">
               <span>Total Amount:</span>
@@ -404,49 +535,97 @@ export default function RegistrationForm() {
         </div>
         
         <div className="mb-6">
-          <h4 className="text-[#D4A72C] font-medium mb-3">Payment Methods</h4>
+          <h4 className="text-[#D4A72C] font-medium mb-3">Select Payment Method</h4>
           <div className="space-y-3">
-            <div className="border border-[#4A6D33]/50 rounded-lg p-3 bg-[#1A2614]/30 cursor-pointer hover:bg-[#1A2614]/50 transition-colors">
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full border-2 border-[#D4A72C] mr-3 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-[#D4A72C]"></div>
-                </div>
-                <div>
-                  <p className="text-[#E5E1D6] font-medium">Credit/Debit Card</p>
-                  <p className="text-[#8B9D7D] text-sm">Pay securely with your card</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="border border-[#4A6D33]/50 rounded-lg p-3 bg-[#1A2614]/30 cursor-pointer hover:bg-[#1A2614]/50 transition-colors">
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full border-2 border-[#4A6D33] mr-3"></div>
-                <div>
-                  <p className="text-[#E5E1D6] font-medium">UPI</p>
-                  <p className="text-[#8B9D7D] text-sm">Pay with your favorite UPI app</p>
+            {paymentMethods.map((method) => (
+              <div
+                key={method.id}
+                className={`border border-[#4A6D33]/50 rounded-lg p-3 bg-[#1A2614]/30 cursor-pointer hover:bg-[#1A2614]/50 transition-colors ${
+                  selectedMethod === method.id ? 'border-[#D4A72C] bg-[#1A2614]/50' : ''
+                }`}
+                onClick={() => setSelectedMethod(method.id)}
+              >
+                <div className="flex items-center">
+                  <div className="w-6 h-6 rounded-full border-2 border-[#D4A72C] mr-3 flex items-center justify-center">
+                    <div className="w-3 h-3 rounded-full bg-[#D4A72C]"></div>
+                  </div>
+                  <div>
+                    <p className="text-[#E5E1D6] font-medium">{method.icon} {method.name}</p>
+                    <p className="text-[#8B9D7D] text-sm">{method.description}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="border border-[#4A6D33]/50 rounded-lg p-3 bg-[#1A2614]/30 cursor-pointer hover:bg-[#1A2614]/50 transition-colors">
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full border-2 border-[#4A6D33] mr-3"></div>
-                <div>
-                  <p className="text-[#E5E1D6] font-medium">Net Banking</p>
-                  <p className="text-[#8B9D7D] text-sm">Pay directly from your bank account</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
+
+        {selectedMethod && (
+          <div className="mb-6">
+            <h4 className="text-[#D4A72C] font-medium mb-3">Payment Details</h4>
+            <div className="space-y-3">
+              {selectedMethod === 'upi' && (
+                <div className="space-y-3">
+                  <Input
+                    placeholder="Enter UPI ID (e.g., name@upi)"
+                    value={paymentDetails.upiId}
+                    onChange={(e) => setPaymentDetails({ ...paymentDetails, upiId: e.target.value })}
+                    className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                  />
+                  <p className="text-[#8B9D7D] text-sm">
+                    You will be redirected to your UPI app to complete the payment
+                  </p>
+                </div>
+              )}
+              
+              {selectedMethod === 'card' && (
+                <div className="space-y-3">
+                  <Input
+                    placeholder="Card Number"
+                    value={paymentDetails.cardNumber}
+                    onChange={(e) => setPaymentDetails({ ...paymentDetails, cardNumber: e.target.value })}
+                    className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      placeholder="MM/YY"
+                      value={paymentDetails.expiry}
+                      onChange={(e) => setPaymentDetails({ ...paymentDetails, expiry: e.target.value })}
+                      className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                    />
+                    <Input
+                      placeholder="CVV"
+                      value={paymentDetails.cvv}
+                      onChange={(e) => setPaymentDetails({ ...paymentDetails, cvv: e.target.value })}
+                      className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {selectedMethod === 'netbanking' && (
+                <div className="space-y-3">
+                  <Input
+                    placeholder="Select Bank"
+                    value={paymentDetails.bankName}
+                    onChange={(e) => setPaymentDetails({ ...paymentDetails, bankName: e.target.value })}
+                    className="border-[#4A6D33] bg-[#1A2614]/50 text-[#E5E1D6] focus-visible:ring-[#D4A72C]"
+                  />
+                  <p className="text-[#8B9D7D] text-sm">
+                    You will be redirected to your bank's website to complete the payment
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         
         <div className="flex flex-col sm:flex-row gap-4">
           <Button
-            onClick={handlePayment}
-            disabled={isSubmitting}
+            onClick={handlePaymentSubmit}
+            disabled={!selectedMethod || isProcessing}
             className="w-full bg-[#D4A72C] text-[#0F1A0A] hover:bg-[#C69A28] disabled:opacity-70"
           >
-            {isSubmitting ? (
+            {isProcessing ? (
               <span className="flex items-center justify-center gap-2">
                 <svg
                   className="h-5 w-5 animate-spin"
@@ -483,7 +662,7 @@ export default function RegistrationForm() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (

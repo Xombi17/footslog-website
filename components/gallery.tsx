@@ -3,88 +3,52 @@
 import { useRef } from "react"
 import { motion, useInView } from "framer-motion"
 import Image from "next/image"
-import { ChevronRight } from "lucide-react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { useEffect } from "react"
-
-// Sandhan Valley natural wonders data
-const naturalWonders = [
-  {
-    name: "Stargazing Experience",
-    description: "Experience the breathtaking night sky view from Sandhan Valley, one of Maharashtra's best stargazing spots. The narrow gorge opens up to reveal a blanket of stars unlike anything you've seen in the city.",
-    stats: { bestTime: "Clear moonless nights", duration: "2-3 hours", highlight: "Milky Way visibility" },
-    image: "/images/stargazing.png",
-  },
-  {
-    name: "Firefly Magic",
-    description: "During pre-monsoon months, witness the magical spectacle of thousands of fireflies illuminating the valley with their synchronous flashing, creating a natural light show in the forest.",
-    stats: { bestTime: "May-June 2025", duration: "Evening hours", highlight: "Synchronous flashing" },
-    image: "/images/fireflies.jpg",
-  },
-  {
-    name: "Valley of Shadows",
-    description: "Known as the 'Valley of Shadows,' Sandhan's towering walls create dramatic light and shadow effects throughout the day as sunlight filters through the narrow gorge.",
-    stats: { bestTime: "Morning/Evening", duration: "All day", highlight: "Golden hour shadows" },
-    image: "/images/valley.png",
-  },
-  {
-    name: "Night Camping",
-    description: "Surrounded by the majestic Sahyadri range, camping in Sandhan Valley offers an otherworldly experience. Fall asleep to the sounds of nature and wake up to the breathtaking valley views.",
-    stats: { bestTime: "Winter months", duration: "Overnight", highlight: "Sunrise views" },
-    image: "/images/nightcamping.jpg",
-  }
-]
+import { FaCamera, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa"
 
 export default function NaturalWonders() {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
-  const cardRefs = useRef<HTMLDivElement[]>([])
+  const isInView = useInView(sectionRef, { once: false, amount: 0.2 })
 
-  // GSAP Animation
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
-    
-    cardRefs.current.forEach((card, index) => {
-      gsap.fromTo(
-        card,
-        { 
-          y: 100,
-          opacity: 0,
-        },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            end: "bottom 20%",
-            toggleActions: "play reverse play reverse"
-          },
-          delay: index * 0.2
-        }
-      )
-    })
-
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+  const galleryItems = [
+    {
+      id: 1,
+      title: "Stargazing Experience",
+      description: "Experience the breathtaking night sky view from Sandhan Valley, one of Maharashtra's best stargazing spots. The narrow gorge opens up to reveal a blanket of stars unlike anything you've seen in the city.",
+      image: "/images/stargazing.png",
+      location: "Sandhan Valley",
+      date: "March 2024"
+    },
+    {
+      id: 2,
+      title: "Firefly Magic",
+      description: "During pre-monsoon months, witness the magical spectacle of thousands of fireflies illuminating the valley with their synchronous flashing, creating a natural light show in the forest.",
+      image: "/images/fireflies.jpg",
+      location: "Sandhan Valley",
+      date: "March 2024"
+    },
+    {
+      id: 3,
+      title: "Valley of Shadows",
+      description: "Known as the 'Valley of Shadows,' Sandhan's towering walls create dramatic light and shadow effects throughout the day as sunlight filters through the narrow gorge.",
+      image: "/images/valley.png",
+      location: "Sandhan Valley",
+      date: "March 2024"
+    },
+    {
+      id: 4,
+      title: "Night Camping",
+      description: "Surrounded by the majestic Sahyadri range, camping in Sandhan Valley offers an otherworldly experience. Fall asleep to the sounds of nature and wake up to the breathtaking valley views.",
+      image: "/images/nightcamping.jpg",
+      location: "Sandhan Valley",
+      date: "March 2024"
     }
-  }, [])
-
-  // Add card reference
-  const addCardRef = (el: HTMLDivElement | null) => {
-    if (el && !cardRefs.current.includes(el)) {
-      cardRefs.current.push(el)
-    }
-  }
+  ]
 
   return (
     <section 
       ref={sectionRef} 
       className="relative py-20" 
-      id="wonders"
+      id="gallery"
       style={{
         background: "linear-gradient(to bottom, #113907, #0A1508)"
       }}
@@ -110,57 +74,57 @@ export default function NaturalWonders() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {naturalWonders.map((wonder, index) => (
-            <div 
-              key={index}
-              ref={addCardRef}
-              className="bg-[#0A1508]/70 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl border border-[#243420]/50 hover:border-[#F3B939]/30 transition-all duration-500"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {galleryItems.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl hover:shadow-[#F3B939]/20 transition-all duration-300 max-w-sm mx-auto w-full"
             >
-              <div className="relative h-64">
-                <Image 
-                  src={wonder.image} 
-                  alt={wonder.name}
+              <div className="relative aspect-square overflow-hidden">
+                <Image
+                  src={item.image}
+                  alt={item.title}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A1508] to-transparent" />
-                <div className="absolute bottom-0 left-0 w-full p-6">
-                  <h3 className="text-2xl font-bold text-[#F3B939]">{wonder.name}</h3>
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               
-              <div className="p-6">
-                <p className="text-white/90 mb-6">{wonder.description}</p>
-                
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="bg-[#1A2614]/70 rounded-lg px-3 py-2 flex-1">
-                    <p className="text-[#F3B939] font-medium mb-1">Best Time</p>
-                    <p className="text-white">{wonder.stats.bestTime}</p>
+              <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/90 to-transparent">
+                <h3 className="text-xl font-bold text-[#F3B939] mb-2">{item.title}</h3>
+                <p className="text-white/90 mb-4">{item.description}</p>
+                <div className="flex items-center space-x-4 text-sm text-white/70">
+                  <div className="flex items-center">
+                    <FaMapMarkerAlt className="mr-2 text-[#F3B939]" />
+                    <span>{item.location}</span>
                   </div>
-                  <div className="bg-[#1A2614]/70 rounded-lg px-3 py-2 flex-1">
-                    <p className="text-[#F3B939] font-medium mb-1">Duration</p>
-                    <p className="text-white">{wonder.stats.duration}</p>
-                  </div>
-                  <div className="bg-[#1A2614]/70 rounded-lg px-3 py-2 flex-1">
-                    <p className="text-[#F3B939] font-medium mb-1">Highlight</p>
-                    <p className="text-white">{wonder.stats.highlight}</p>
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="mr-2 text-[#F3B939]" />
+                    <span>{item.date}</span>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-        
-        <div className="text-center mt-12">
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="mt-16 text-center"
+        >
           <a 
             href="/register" 
-            className="inline-flex items-center gap-2 bg-[#F3B939] hover:bg-amber-500 text-[#0A1508] font-bold rounded-full transition-all duration-300 px-8 py-3 shadow-lg hover:shadow-amber-400/30"
+            className="inline-flex items-center px-8 py-4 bg-[#F3B939] hover:bg-amber-500 text-[#0A1508] font-bold rounded-full transition-all duration-300 text-lg shadow-lg hover:shadow-amber-400/30 hover:scale-105"
           >
-            <span>Experience these wonders</span>
-            <ChevronRight className="h-5 w-5" />
+            <FaCamera className="mr-3" />
+            Join the Adventure
           </a>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

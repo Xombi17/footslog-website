@@ -1,7 +1,6 @@
 import Navigation from "@/components/navigation"
 import Footer from "@/components/footer"
 import FeaturedHighlights from "@/components/featured-highlights"
-import AchievementsStats from "@/components/achievements-stats"
 import SectionTransition from "@/components/section-transition"
 import { ParallaxProvider } from "@/components/parallax-provider"
 import BackgroundMusic from "@/components/background-music"
@@ -65,9 +64,8 @@ export default function AboutPage() {
             <FeaturedHighlights />
           </SectionTransition>
 
-          <SectionTransition>
-            <AchievementsStats />
-          </SectionTransition>
+          
+          
 
           <Footer />
         </div>

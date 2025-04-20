@@ -1,9 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { getAllRegistrations } from '@/lib/supabase';
-import { motion } from 'framer-motion';
-import { FiRefreshCw, FiLogOut, FiSearch, FiFilter, FiDownload } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  FiRefreshCw, 
+  FiLogOut, 
+  FiSearch, 
+  FiFilter, 
+  FiDownload, 
+  FiCheck, 
+  FiX,
+  FiChevronUp,
+  FiChevronDown,
+  FiTrash2,
+  FiMail,
+  FiUserCheck,
+  FiDollarSign,
+  FiCalendar
+} from 'react-icons/fi';
 
 interface Registration {
   id: string;
@@ -13,8 +28,11 @@ interface Registration {
   ticketId: string;
   registeredAt: string;
   updatedAt: string;
-  [key: string]: any; // For additional fields stored in JSONB
+  [key: string]: any;
 }
+
+type SortField = 'fullName' | 'email' | 'paymentStatus' | 'registeredAt';
+type SortDirection = 'asc' | 'desc';
 
 export default function AdminPage() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
@@ -25,12 +43,35 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [paymentFilter, setPaymentFilter] = useState<string>('all');
+  const [sortField, setSortField] = useState<SortField>('registeredAt');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [showBulkActions, setShowBulkActions] = useState(false);
+  const [stats, setStats] = useState({
+    total: 0,
+    completed: 0,
+    pending: 0,
+    today: 0
+  });
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchRegistrations();
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (registrations.length > 0) {
+      const today = new Date().toISOString().split('T')[0];
+      setStats({
+        total: registrations.length,
+        completed: registrations.filter(r => r.paymentStatus === 'completed').length,
+        pending: registrations.filter(r => r.paymentStatus === 'pending').length,
+        today: registrations.filter(r => r.registeredAt.startsWith(today)).length
+      });
+    }
+  }, [registrations]);
 
   const fetchRegistrations = async () => {
     try {
@@ -55,11 +96,73 @@ export default function AdminPage() {
     }
   };
 
-  const filteredRegistrations = registrations.filter(reg => 
-    reg.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    reg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    reg.ticketId.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSort = (field: SortField) => {
+    if (field === sortField) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRows(filteredRegistrations.map(r => r.id));
+    } else {
+      setSelectedRows([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedRows([...selectedRows, id]);
+    } else {
+      setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+    }
+  };
+
+  const handleBulkAction = async (action: 'delete' | 'markPaid' | 'markPending') => {
+    if (selectedRows.length === 0) return;
+
+    try {
+      setLoading(true);
+      // Here you would implement the actual bulk actions
+      // For now, we'll just show a success message
+      alert(`Bulk action "${action}" would be performed on ${selectedRows.length} registrations`);
+      setSelectedRows([]);
+      setShowBulkActions(false);
+    } catch (err) {
+      setError('Failed to perform bulk action');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredRegistrations = useMemo(() => {
+    let result = registrations.filter(reg => 
+      reg.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reg.ticketId.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (paymentFilter !== 'all') {
+      result = result.filter(reg => reg.paymentStatus === paymentFilter);
+    }
+
+    result.sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      const direction = sortDirection === 'asc' ? 1 : -1;
+
+      if (sortField === 'registeredAt') {
+        return (new Date(aValue).getTime() - new Date(bValue).getTime()) * direction;
+      }
+
+      return aValue.localeCompare(bValue) * direction;
+    });
+
+    return result;
+  }, [registrations, searchTerm, paymentFilter, sortField, sortDirection]);
 
   const handleExportCSV = () => {
     const headers = ['Name', 'Email', 'Payment Status', 'Ticket ID', 'Registration Date'];
@@ -154,6 +257,73 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl p-6 shadow-lg"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-green-100 rounded-lg">
+                <FiUserCheck className="text-green-600 text-2xl" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Total Registrations</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              </div>
+            </div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-xl p-6 shadow-lg"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <FiDollarSign className="text-blue-600 text-2xl" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Completed Payments</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
+              </div>
+            </div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-xl p-6 shadow-lg"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-yellow-100 rounded-lg">
+                <FiDollarSign className="text-yellow-600 text-2xl" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Pending Payments</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+              </div>
+            </div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-xl p-6 shadow-lg"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <FiCalendar className="text-purple-600 text-2xl" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Today's Registrations</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.today}</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="p-4 border-b border-gray-200">
             <div className="flex flex-col md:flex-row gap-4">
@@ -167,8 +337,52 @@ export default function AdminPage() {
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                 />
               </div>
+              <div className="flex gap-4">
+                <select
+                  value={paymentFilter}
+                  onChange={(e) => setPaymentFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                >
+                  <option value="all">All Payments</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </div>
             </div>
           </div>
+
+          {selectedRows.length > 0 && (
+            <div className="bg-green-50 p-4 border-b border-green-200">
+              <div className="flex items-center justify-between">
+                <p className="text-green-800">
+                  {selectedRows.length} registration{selectedRows.length !== 1 ? 's' : ''} selected
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleBulkAction('markPaid')}
+                    className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    <FiCheck />
+                    Mark as Paid
+                  </button>
+                  <button
+                    onClick={() => handleBulkAction('markPending')}
+                    className="flex items-center gap-2 bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
+                  >
+                    <FiDollarSign />
+                    Mark as Pending
+                  </button>
+                  <button
+                    onClick={() => handleBulkAction('delete')}
+                    className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    <FiTrash2 />
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {loading ? (
             <div className="p-8 text-center">
@@ -183,19 +397,59 @@ export default function AdminPage() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.length === filteredRegistrations.length}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                      />
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => handleSort('fullName')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Name
+                        {sortField === 'fullName' && (
+                          sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => handleSort('email')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Email
+                        {sortField === 'email' && (
+                          sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => handleSort('paymentStatus')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Payment Status
+                        {sortField === 'paymentStatus' && (
+                          sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => handleSort('registeredAt')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Registered At
+                        {sortField === 'registeredAt' && (
+                          sortDirection === 'asc' ? <FiChevronUp /> : <FiChevronDown />
+                        )}
+                      </div>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Payment Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Registered At
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Details
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -207,6 +461,14 @@ export default function AdminPage() {
                       animate={{ opacity: 1 }}
                       className="hover:bg-gray-50 transition-colors"
                     >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(reg.id)}
+                          onChange={(e) => handleSelectRow(reg.id, e.target.checked)}
+                          className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                        />
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{reg.fullName}</div>
                       </td>
@@ -230,15 +492,26 @@ export default function AdminPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <button
-                          onClick={() => {
-                            setSelectedRegistration(reg);
-                            setIsModalOpen(true);
-                          }}
-                          className="text-green-600 hover:text-green-800 font-medium"
-                        >
-                          View Details
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedRegistration(reg);
+                              setIsModalOpen(true);
+                            }}
+                            className="text-green-600 hover:text-green-800 font-medium"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() => {
+                              // Implement email sending
+                              alert(`Would send email to ${reg.email}`);
+                            }}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            <FiMail />
+                          </button>
+                        </div>
                       </td>
                     </motion.tr>
                   ))}

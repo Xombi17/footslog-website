@@ -19,7 +19,10 @@ import {
   FiDollarSign,
   FiCalendar,
   FiSend,
-  FiPaperclip
+  FiPaperclip,
+  FiClock,
+  FiUndo,
+  FiAlertCircle
 } from 'react-icons/fi';
 
 interface Registration {
@@ -165,6 +168,129 @@ function EmailModal({ isOpen, onClose, recipients, onSend }: EmailModalProps) {
   );
 }
 
+interface ActionHistory {
+  id: string;
+  type: 'delete' | 'markPaid' | 'markPending' | 'email';
+  data: any;
+  timestamp: string;
+  canUndo: boolean;
+}
+
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+}
+
+function ConfirmationModal({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  title, 
+  message,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel'
+}: ConfirmationModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white rounded-xl shadow-lg max-w-md w-full p-6"
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <FiAlertCircle className="text-yellow-500 text-2xl" />
+          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+        </div>
+        <p className="text-gray-600 mb-6">{message}</p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-gray-700 hover:text-gray-900"
+          >
+            {cancelText}
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            {confirmText}
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function HistoryModal({ isOpen, onClose, history }: { isOpen: boolean; onClose: () => void; history: ActionHistory[] }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      >
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Action History</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
+          
+          <div className="space-y-4">
+            {history.map((action) => (
+              <div key={action.id} className="border-b border-gray-200 pb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      {action.type === 'delete' && 'Deleted Registration'}
+                      {action.type === 'markPaid' && 'Marked as Paid'}
+                      {action.type === 'markPending' && 'Marked as Pending'}
+                      {action.type === 'email' && 'Sent Email'}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(action.timestamp).toLocaleString()}
+                    </p>
+                  </div>
+                  {action.canUndo && (
+                    <button
+                      onClick={() => {
+                        // Implement undo functionality
+                        console.log('Undo action:', action);
+                      }}
+                      className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                    >
+                      <FiUndo size={16} />
+                      Undo
+                    </button>
+                  )}
+                </div>
+                <div className="mt-2 text-sm text-gray-600">
+                  <pre className="whitespace-pre-wrap">
+                    {JSON.stringify(action.data, null, 2)}
+                  </pre>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function AdminPage() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
@@ -187,6 +313,14 @@ export default function AdminPage() {
   });
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [actionHistory, setActionHistory] = useState<ActionHistory[]>([]);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [confirmationAction, setConfirmationAction] = useState<{
+    type: 'delete' | 'markPaid' | 'markPending';
+    ids: string[];
+    data?: any;
+  } | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -254,22 +388,34 @@ export default function AdminPage() {
     }
   };
 
+  const addToHistory = (type: ActionHistory['type'], data: any, canUndo = true) => {
+    setActionHistory(prev => [{
+      id: Date.now().toString(),
+      type,
+      data,
+      timestamp: new Date().toISOString(),
+      canUndo
+    }, ...prev]);
+  };
+
   const handleBulkAction = async (action: 'delete' | 'markPaid' | 'markPending') => {
     if (selectedRows.length === 0) return;
+
+    if (action === 'delete') {
+      setConfirmationAction({
+        type: 'delete',
+        ids: selectedRows,
+        data: filteredRegistrations.filter(reg => selectedRows.includes(reg.id))
+      });
+      setIsConfirmationOpen(true);
+      return;
+    }
 
     try {
       setLoading(true);
       let error = null;
 
       switch (action) {
-        case 'delete':
-          const { error: deleteError } = await supabase
-            .from('simple_registrations')
-            .delete()
-            .in('id', selectedRows);
-          error = deleteError;
-          break;
-
         case 'markPaid':
           const { error: paidError } = await supabase
             .from('simple_registrations')
@@ -291,32 +437,38 @@ export default function AdminPage() {
         throw error;
       }
 
-      // Refresh the registrations list
+      addToHistory(action, {
+        ids: selectedRows,
+        registrations: filteredRegistrations.filter(reg => selectedRows.includes(reg.id))
+      });
+
       await fetchRegistrations();
       setSelectedRows([]);
       setShowBulkActions(false);
     } catch (err) {
       console.error('Error performing bulk action:', err);
-      setError(`Failed to ${action} registrations`);
+      setError(`Failed to ${action} registrations: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
   const handleSingleAction = async (id: string, action: 'delete' | 'markPaid' | 'markPending') => {
+    if (action === 'delete') {
+      setConfirmationAction({
+        type: 'delete',
+        ids: [id],
+        data: filteredRegistrations.find(reg => reg.id === id)
+      });
+      setIsConfirmationOpen(true);
+      return;
+    }
+
     try {
       setLoading(true);
       let error = null;
 
       switch (action) {
-        case 'delete':
-          const { error: deleteError } = await supabase
-            .from('simple_registrations')
-            .delete()
-            .eq('id', id);
-          error = deleteError;
-          break;
-
         case 'markPaid':
           const { error: paidError } = await supabase
             .from('simple_registrations')
@@ -338,13 +490,44 @@ export default function AdminPage() {
         throw error;
       }
 
-      // Refresh the registrations list
+      addToHistory(action, {
+        id,
+        registration: filteredRegistrations.find(reg => reg.id === id)
+      });
+
       await fetchRegistrations();
     } catch (err) {
       console.error('Error performing action:', err);
-      setError(`Failed to ${action} registration`);
+      setError(`Failed to ${action} registration: ${err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleConfirmAction = async () => {
+    if (!confirmationAction) return;
+
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from('simple_registrations')
+        .delete()
+        .in('id', confirmationAction.ids);
+
+      if (error) {
+        throw error;
+      }
+
+      addToHistory('delete', confirmationAction.data, false);
+      await fetchRegistrations();
+      setSelectedRows([]);
+    } catch (err) {
+      console.error('Error deleting registrations:', err);
+      setError(`Failed to delete registrations: ${err.message}`);
+    } finally {
+      setLoading(false);
+      setIsConfirmationOpen(false);
+      setConfirmationAction(null);
     }
   };
 
@@ -634,6 +817,13 @@ export default function AdminPage() {
                     <FiTrash2 />
                     Delete
                   </button>
+                  <button
+                    onClick={() => setIsHistoryOpen(true)}
+                    className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    <FiClock />
+                    History
+                  </button>
                 </div>
               </div>
             </div>
@@ -868,6 +1058,24 @@ export default function AdminPage() {
         }}
         recipients={selectedEmails}
         onSend={handleSendEmail}
+      />
+
+      <ConfirmationModal
+        isOpen={isConfirmationOpen}
+        onClose={() => {
+          setIsConfirmationOpen(false);
+          setConfirmationAction(null);
+        }}
+        onConfirm={handleConfirmAction}
+        title="Confirm Deletion"
+        message={`Are you sure you want to delete ${confirmationAction?.ids.length} registration${confirmationAction?.ids.length !== 1 ? 's' : ''}? This action cannot be undone.`}
+        confirmText="Delete"
+      />
+
+      <HistoryModal
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        history={actionHistory}
       />
     </div>
   );

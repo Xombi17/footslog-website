@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { getAllRegistrations } from '@/lib/supabase';
+import { getAllRegistrations, supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiRefreshCw, 
@@ -259,13 +259,90 @@ export default function AdminPage() {
 
     try {
       setLoading(true);
-      // Here you would implement the actual bulk actions
-      // For now, we'll just show a success message
-      alert(`Bulk action "${action}" would be performed on ${selectedRows.length} registrations`);
+      let error = null;
+
+      switch (action) {
+        case 'delete':
+          const { error: deleteError } = await supabase
+            .from('simple_registrations')
+            .delete()
+            .in('id', selectedRows);
+          error = deleteError;
+          break;
+
+        case 'markPaid':
+          const { error: paidError } = await supabase
+            .from('simple_registrations')
+            .update({ payment_status: 'completed' })
+            .in('id', selectedRows);
+          error = paidError;
+          break;
+
+        case 'markPending':
+          const { error: pendingError } = await supabase
+            .from('simple_registrations')
+            .update({ payment_status: 'pending' })
+            .in('id', selectedRows);
+          error = pendingError;
+          break;
+      }
+
+      if (error) {
+        throw error;
+      }
+
+      // Refresh the registrations list
+      await fetchRegistrations();
       setSelectedRows([]);
       setShowBulkActions(false);
     } catch (err) {
-      setError('Failed to perform bulk action');
+      console.error('Error performing bulk action:', err);
+      setError(`Failed to ${action} registrations`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSingleAction = async (id: string, action: 'delete' | 'markPaid' | 'markPending') => {
+    try {
+      setLoading(true);
+      let error = null;
+
+      switch (action) {
+        case 'delete':
+          const { error: deleteError } = await supabase
+            .from('simple_registrations')
+            .delete()
+            .eq('id', id);
+          error = deleteError;
+          break;
+
+        case 'markPaid':
+          const { error: paidError } = await supabase
+            .from('simple_registrations')
+            .update({ payment_status: 'completed' })
+            .eq('id', id);
+          error = paidError;
+          break;
+
+        case 'markPending':
+          const { error: pendingError } = await supabase
+            .from('simple_registrations')
+            .update({ payment_status: 'pending' })
+            .eq('id', id);
+          error = pendingError;
+          break;
+      }
+
+      if (error) {
+        throw error;
+      }
+
+      // Refresh the registrations list
+      await fetchRegistrations();
+    } catch (err) {
+      console.error('Error performing action:', err);
+      setError(`Failed to ${action} registration`);
     } finally {
       setLoading(false);
     }
@@ -687,6 +764,29 @@ export default function AdminPage() {
                           >
                             <FiMail />
                           </button>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => handleSingleAction(reg.id, 'markPaid')}
+                              className="text-green-600 hover:text-green-800"
+                              title="Mark as Paid"
+                            >
+                              <FiCheck />
+                            </button>
+                            <button
+                              onClick={() => handleSingleAction(reg.id, 'markPending')}
+                              className="text-yellow-600 hover:text-yellow-800"
+                              title="Mark as Pending"
+                            >
+                              <FiDollarSign />
+                            </button>
+                            <button
+                              onClick={() => handleSingleAction(reg.id, 'delete')}
+                              className="text-red-600 hover:text-red-800"
+                              title="Delete"
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </motion.tr>

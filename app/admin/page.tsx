@@ -17,7 +17,9 @@ import {
   FiMail,
   FiUserCheck,
   FiDollarSign,
-  FiCalendar
+  FiCalendar,
+  FiSend,
+  FiPaperclip
 } from 'react-icons/fi';
 
 interface Registration {
@@ -33,6 +35,135 @@ interface Registration {
 
 type SortField = 'fullName' | 'email' | 'paymentStatus' | 'registeredAt';
 type SortDirection = 'asc' | 'desc';
+
+interface EmailModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  recipients: string[];
+  onSend: (subject: string, body: string) => Promise<void>;
+}
+
+function EmailModal({ isOpen, onClose, recipients, onSend }: EmailModalProps) {
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subject.trim() || !body.trim()) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    try {
+      setIsSending(true);
+      setError(null);
+      await onSend(subject, body);
+      setSubject('');
+      setBody('');
+      onClose();
+    } catch (err) {
+      setError('Failed to send email');
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      >
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Send Email</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                To
+              </label>
+              <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-600">
+                {recipients.join(', ')}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Subject
+              </label>
+              <input
+                type="text"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                placeholder="Enter email subject"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Message
+              </label>
+              <textarea
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                rows={8}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                placeholder="Enter your message"
+              />
+            </div>
+
+            {error && (
+              <div className="text-red-500 text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-gray-700 hover:text-gray-900"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSending}
+                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
+                {isSending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <FiSend />
+                    Send Email
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function AdminPage() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
@@ -54,6 +185,8 @@ export default function AdminPage() {
     pending: 0,
     today: 0
   });
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -136,6 +269,44 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSendEmail = async (subject: string, body: string) => {
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: selectedEmails,
+          subject,
+          body,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send email');
+      }
+
+      alert('Email sent successfully!');
+    } catch (err) {
+      console.error('Error sending email:', err);
+      throw err;
+    }
+  };
+
+  const handleEmailClick = (email: string) => {
+    setSelectedEmails([email]);
+    setIsEmailModalOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    const emails = filteredRegistrations
+      .filter(reg => selectedRows.includes(reg.id))
+      .map(reg => reg.email);
+    setSelectedEmails(emails);
+    setIsEmailModalOpen(true);
   };
 
   const filteredRegistrations = useMemo(() => {
@@ -359,6 +530,13 @@ export default function AdminPage() {
                 </p>
                 <div className="flex gap-2">
                   <button
+                    onClick={handleBulkEmail}
+                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <FiMail />
+                    Send Email
+                  </button>
+                  <button
                     onClick={() => handleBulkAction('markPaid')}
                     className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
                   >
@@ -503,11 +681,9 @@ export default function AdminPage() {
                             View
                           </button>
                           <button
-                            onClick={() => {
-                              // Implement email sending
-                              alert(`Would send email to ${reg.email}`);
-                            }}
+                            onClick={() => handleEmailClick(reg.email)}
                             className="text-blue-600 hover:text-blue-800"
+                            title="Send Email"
                           >
                             <FiMail />
                           </button>
@@ -583,6 +759,16 @@ export default function AdminPage() {
           </motion.div>
         </div>
       )}
+
+      <EmailModal
+        isOpen={isEmailModalOpen}
+        onClose={() => {
+          setIsEmailModalOpen(false);
+          setSelectedEmails([]);
+        }}
+        recipients={selectedEmails}
+        onSend={handleSendEmail}
+      />
     </div>
   );
 } 

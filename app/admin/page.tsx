@@ -231,6 +231,74 @@ function ConfirmationModal({
 function HistoryModal({ isOpen, onClose, history }: { isOpen: boolean; onClose: () => void; history: ActionHistory[] }) {
   if (!isOpen) return null;
 
+  const getActionIcon = (type: ActionHistory['type']) => {
+    switch (type) {
+      case 'delete':
+        return <FiTrash2 className="text-red-500" />;
+      case 'markPaid':
+        return <FiCheck className="text-green-500" />;
+      case 'markPending':
+        return <FiDollarSign className="text-yellow-500" />;
+      case 'email':
+        return <FiMail className="text-blue-500" />;
+      default:
+        return null;
+    }
+  };
+
+  const getActionDetails = (action: ActionHistory) => {
+    switch (action.type) {
+      case 'delete':
+        return (
+          <div className="mt-2 text-sm text-gray-600">
+            <p className="font-medium">Deleted Registrations:</p>
+            <ul className="list-disc list-inside mt-1">
+              {Array.isArray(action.data) ? action.data.map((reg: any) => (
+                <li key={reg.id}>
+                  {reg.fullName} ({reg.email})
+                </li>
+              )) : (
+                <li>
+                  {action.data.fullName} ({action.data.email})
+                </li>
+              )}
+            </ul>
+          </div>
+        );
+      case 'markPaid':
+      case 'markPending':
+        return (
+          <div className="mt-2 text-sm text-gray-600">
+            <p className="font-medium">Updated Registrations:</p>
+            <ul className="list-disc list-inside mt-1">
+              {Array.isArray(action.data.registrations) ? action.data.registrations.map((reg: any) => (
+                <li key={reg.id}>
+                  {reg.fullName} ({reg.email})
+                </li>
+              )) : (
+                <li>
+                  {action.data.registration.fullName} ({action.data.registration.email})
+                </li>
+              )}
+            </ul>
+          </div>
+        );
+      case 'email':
+        return (
+          <div className="mt-2 text-sm text-gray-600">
+            <p className="font-medium">Email Details:</p>
+            <div className="mt-1 space-y-1">
+              <p><span className="font-medium">To:</span> {action.data.to.join(', ')}</p>
+              <p><span className="font-medium">Subject:</span> {action.data.subject}</p>
+              <p><span className="font-medium">Content:</span> {action.data.body}</p>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <motion.div 
@@ -250,40 +318,49 @@ function HistoryModal({ isOpen, onClose, history }: { isOpen: boolean; onClose: 
           </div>
           
           <div className="space-y-4">
-            {history.map((action) => (
-              <div key={action.id} className="border-b border-gray-200 pb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {action.type === 'delete' && 'Deleted Registration'}
-                      {action.type === 'markPaid' && 'Marked as Paid'}
-                      {action.type === 'markPending' && 'Marked as Pending'}
-                      {action.type === 'email' && 'Sent Email'}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {new Date(action.timestamp).toLocaleString()}
-                    </p>
-                  </div>
-                  {action.canUndo && (
-                    <button
-                      onClick={() => {
-                        // Implement undo functionality
-                        console.log('Undo action:', action);
-                      }}
-                      className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
-                    >
-                      <FiUndo size={16} />
-                      Undo
-                    </button>
-                  )}
-                </div>
-                <div className="mt-2 text-sm text-gray-600">
-                  <pre className="whitespace-pre-wrap">
-                    {JSON.stringify(action.data, null, 2)}
-                  </pre>
-                </div>
+            {history.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No actions recorded yet
               </div>
-            ))}
+            ) : (
+              history.map((action) => (
+                <div key={action.id} className="border-b border-gray-200 pb-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      {getActionIcon(action.type)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {action.type === 'delete' && 'Deleted Registration'}
+                            {action.type === 'markPaid' && 'Marked as Paid'}
+                            {action.type === 'markPending' && 'Marked as Pending'}
+                            {action.type === 'email' && 'Sent Email'}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {new Date(action.timestamp).toLocaleString()}
+                          </p>
+                        </div>
+                        {action.canUndo && (
+                          <button
+                            onClick={() => {
+                              // Implement undo functionality
+                              console.log('Undo action:', action);
+                            }}
+                            className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                          >
+                            <FiUndo size={16} />
+                            Undo
+                          </button>
+                        )}
+                      </div>
+                      {getActionDetails(action)}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </motion.div>
@@ -548,6 +625,13 @@ export default function AdminPage() {
       if (!response.ok) {
         throw new Error('Failed to send email');
       }
+
+      addToHistory('email', {
+        to: selectedEmails,
+        subject,
+        body,
+        timestamp: new Date().toISOString()
+      });
 
       alert('Email sent successfully!');
     } catch (err) {

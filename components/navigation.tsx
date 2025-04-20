@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { MenuIcon, X, Compass, Home, InfoIcon, Calendar, Users } from "lucide-react"
+import { MenuIcon, X, Compass, Home, InfoIcon, Calendar, Users, Image as ImageIcon } from "lucide-react"
 import Image from "next/image"
 import { isAnchorLink, handleNavigation } from "@/lib/navigation-utils"
 
@@ -12,13 +12,13 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [preloaderFinished, setPreloaderFinished] = useState(false)
+  const [activeLink, setActiveLink] = useState<string | null>(null)
   const navRef = useRef<HTMLDivElement>(null)
-  const pathname = usePathname()
+  const pathname = usePathname() || '/'
   const router = useRouter()
 
   // Detect when preloader is finished
   useEffect(() => {
-    // Preloader duration (2s) + fadeout duration (1s)
     const preloaderDuration = 3000
     const timer = setTimeout(() => {
       setPreloaderFinished(true)
@@ -57,18 +57,15 @@ export default function Navigation() {
     }
 
     window.addEventListener("scroll", handleScroll)
-    
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
   
   // Custom navigation handler
   const handleLinkClick = (e: React.MouseEvent, href: string) => {
-    // Only handle the event for local in-page links
     if (isAnchorLink(href) || (pathname === '/' && href.includes('#'))) {
       e.preventDefault()
       handleNavigation(href, router)
+      setActiveLink(href)
     }
   }
 
@@ -76,7 +73,7 @@ export default function Navigation() {
   const links = [
     { href: "/", label: "Home", icon: <Home className="w-5 h-5" /> },
     { href: "/#about", label: "About", icon: <InfoIcon className="w-5 h-5" /> },
-    { href: "/#highlights", label: "Highlights", icon: <Compass className="w-5 h-5" /> },
+    
     { href: "/#itinerary", label: "Itinerary", icon: <Calendar className="w-5 h-5" /> },
     { href: "/#faq", label: "FAQ", icon: <Users className="w-5 h-5" /> },
   ]
@@ -84,35 +81,34 @@ export default function Navigation() {
   // Home page specific links for smooth scrolling
   const homeLinks = pathname === '/' ? [
     { href: "#about", label: "About", icon: <InfoIcon className="w-5 h-5" /> },
-    { href: "#highlights", label: "Highlights", icon: <Compass className="w-5 h-5" /> },
+    
     { href: "#itinerary", label: "Itinerary", icon: <Calendar className="w-5 h-5" /> },
     { href: "#faq", label: "FAQ", icon: <Users className="w-5 h-5" /> },
   ] : [];
   
-  // Combine links - show internal anchor links only when on home page
+  // Combine links
   const navLinks = pathname === '/' ? [links[0], ...homeLinks] : links;
   
   // Function to check if link is active
   const isActive = (path: string) => {
     if (path === '/' && pathname === '/') return true
     if (path.startsWith('/#') && pathname === '/') {
-      // Check if we're on the homepage and the hash matches current section
-      const hash = window.location.hash;
-      return hash === path.substring(1) || (hash === '' && path === '/#about');
+      const hash = window.location.hash
+      return hash === path.substring(1) || (hash === '' && path === '/#about')
     }
     if (path !== '/' && !path.startsWith('#') && pathname.startsWith(path)) return true
     return false
   }
 
   if (!preloaderFinished) {
-    return null; // Don't render anything until preloader is finished
+    return null
   }
 
   return (
     <motion.header
       ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-[#0F1A0A]/90 shadow-lg backdrop-blur-md py-2" : "py-4"
+        isScrolled ? "bg-[#0F1A0A]/95 shadow-lg backdrop-blur-md py-2" : "py-4"
       }`}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -134,14 +130,14 @@ export default function Navigation() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center group">
               <div className="relative w-10 h-10 mr-3">
                 <Image 
                   src="/images/rotaractlogo.png" 
                   alt="Footslog Logo" 
                   width={40} 
                   height={40}
-                  className={`transition-all duration-300 ${isScrolled ? "opacity-100" : "opacity-90"}`}
+                  className={`transition-all duration-300 ${isScrolled ? "opacity-100" : "opacity-90"} group-hover:opacity-100`}
                 />
                 <motion.div
                   className="absolute inset-0"
@@ -179,7 +175,7 @@ export default function Navigation() {
             </Link>
           </motion.div>
 
-          {/* Desktop Navigation - truly centered */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8 items-center">
             {navLinks.map((link, index) => (
               <motion.div
@@ -191,29 +187,32 @@ export default function Navigation() {
                 <Link
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className={`group relative flex flex-col items-center transition-colors duration-300 ${
+                  className={`group relative flex flex-col items-center transition-all duration-300 ${
                     isActive(link.href) 
                       ? "text-[#F3B939]" 
                       : "text-[#E5E1D6] hover:text-[#F3B939]"
                   }`}
                 >
                   <span className="flex items-center justify-center font-medium">
-                    <span className="mr-2">{link.icon}</span>
+                    <span className="mr-2 group-hover:scale-110 transition-transform duration-200">{link.icon}</span>
                     {link.label}
                   </span>
-                  <span 
+                  <motion.span 
                     className={`absolute -bottom-2 left-0 h-0.5 bg-[#F3B939] transition-all duration-300 ${
                       isActive(link.href) 
                         ? "w-full" 
                         : "w-0 group-hover:w-full"
                     }`} 
+                    initial={{ width: 0 }}
+                    animate={{ width: isActive(link.href) ? "100%" : "0%" }}
+                    transition={{ duration: 0.3 }}
                   />
                 </Link>
               </motion.div>
             ))}
           </div>
 
-          {/* Register button - right aligned on desktop */}
+          {/* Register button */}
           <motion.div
             className="hidden md:block md:absolute md:right-4"
             initial={{ opacity: 0, x: 20 }}
@@ -223,14 +222,14 @@ export default function Navigation() {
             <Link 
               href="/#register" 
               onClick={(e) => handleLinkClick(e, "/#register")}
-              className="bg-[#243420] hover:bg-[#2c4127] text-[#F3B939] font-medium py-2 px-5 rounded-md transition-all duration-300 inline-flex items-center border border-[#F3B939]/40 hover:border-[#F3B939] shadow-sm"
+              className="bg-[#243420] hover:bg-[#2c4127] text-[#F3B939] font-medium py-2 px-5 rounded-md transition-all duration-300 inline-flex items-center border border-[#F3B939]/40 hover:border-[#F3B939] shadow-sm hover:shadow-md hover:shadow-[#F3B939]/20"
             >
               <Users className="w-4 h-4 mr-2" />
               Register
             </Link>
           </motion.div>
 
-          {/* Mobile menu button with jungle-themed styling */}
+          {/* Mobile menu button */}
           <motion.div 
             className="md:hidden"
             initial={{ opacity: 0 }}
@@ -239,7 +238,7 @@ export default function Navigation() {
           >
             <button
               onClick={toggleMenu}
-              className="text-[#F3B939] hover:text-[#F3B939] p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#F3B939] bg-[#243420]/70"
+              className="text-[#F3B939] hover:text-[#F3B939] p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#F3B939] bg-[#243420]/70 hover:bg-[#243420] transition-all duration-300"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
@@ -252,7 +251,7 @@ export default function Navigation() {
         </div>
       </div>
 
-      {/* Mobile menu with improved styling */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -302,14 +301,14 @@ export default function Navigation() {
                     handleLinkClick(e, "/#register")
                     setIsMenuOpen(false)
                   }}
-                  className="flex items-center py-3 px-6 w-full justify-center transition-all duration-300 rounded-md bg-[#243420] text-[#F3B939] font-medium border border-[#F3B939]/40"
+                  className="flex items-center py-3 px-6 w-full justify-center transition-all duration-300 rounded-md bg-[#243420] text-[#F3B939] font-medium border border-[#F3B939]/40 hover:border-[#F3B939] hover:shadow-md hover:shadow-[#F3B939]/20"
                 >
                   <Users className="w-5 h-5 mr-3" />
                   <span className="text-lg">Register</span>
                 </Link>
               </motion.div>
               
-              {/* Decorative jungle element at bottom of mobile menu */}
+              {/* Decorative element */}
               <motion.div 
                 className="absolute bottom-8 opacity-20"
                 initial={{ opacity: 0, y: 20 }}

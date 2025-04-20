@@ -11,7 +11,6 @@ import BackgroundMusic from "@/components/background-music"
 import FeaturedHighlights from "@/components/featured-highlights"
 import TrekEquipment from "@/components/trek-equipment"
 import TreksMap from "@/components/treks-map"
-import AchievementsStats from "@/components/achievements-stats"
 import SmoothScroll from "@/components/smooth-scroll"
 import JungleBookFAQ from "@/components/jungle-book-faq"
 
@@ -39,7 +38,7 @@ export default function Home() {
               <TreksMap />
               <TrekEquipment />
               <NaturalWonders />
-              <AchievementsStats />
+              
               <Testimonials />
               <JungleBookFAQ />
 

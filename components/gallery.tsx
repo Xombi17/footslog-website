@@ -47,19 +47,16 @@ export default function NaturalWonders() {
   return (
     <section 
       ref={sectionRef} 
-      className="relative py-20" 
+      className="relative" 
       id="gallery"
-      style={{
-        background: "linear-gradient(to bottom, #113907, #0A1508)"
-      }}
     >
       {/* Background with overlay */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[#0A1508]/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F1A0A] via-[#113907] to-[#0A1508]" />
         <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('/images/stars-bg.svg')] bg-repeat"></div>
       </div>
 
-      <div className="container relative z-10 mx-auto px-4">
+      <div className="container relative z-10 mx-auto px-4 py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

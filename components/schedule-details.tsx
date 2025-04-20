@@ -66,14 +66,14 @@ export default function ScheduleDetails() {
   const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
 
   return (
-    <section ref={sectionRef} className="relative py-20" id="schedule">
+    <section ref={sectionRef} className="relative" id="schedule">
       {/* Background with overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[#0F1A0A]/90 backdrop-blur-sm" />
         <div className="absolute inset-0 bg-[url('/images/paw-prints.svg')] bg-repeat opacity-5"></div>
       </div>
 
-      <div className="container relative z-10 mx-auto px-4">
+      <div className="container relative z-10 mx-auto px-4 py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

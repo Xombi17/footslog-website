@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useToast } from "@/hooks/use-toast"
 import confetti from 'canvas-confetti'
 import { QRCodeSVG } from 'react-qr-code'
+import { supabase } from '@/lib/supabase'
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
@@ -49,6 +50,7 @@ export default function RegistrationForm() {
   const [currentStep, setCurrentStep] = useState<'form' | 'payment' | 'ticket'>('form')
   const [paymentComplete, setPaymentComplete] = useState(false)
   const [ticketId, setTicketId] = useState("")
+  const [error, setError] = useState<string | null>(null)
   
   const sectionRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
@@ -109,58 +111,79 @@ export default function RegistrationForm() {
     setIsSubmitting(true)
 
     try {
-      // Store the registration data locally for state management
-      localStorage.setItem('footslog_registration', JSON.stringify(values))
-      setRegistrationData(values)
-      
-      // Send to backend API
-      const baseUrl = getBaseUrl();
-      const response = await fetch(`${baseUrl}/api/registrations`, {
+      // Save registration data to Supabase
+      const { data, error } = await supabase
+        .from('simple_registrations')
+        .insert([
+          {
+            email: values.email,
+            full_name: values.fullName,
+            data: values,
+            payment_status: 'pending',
+            registered_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Send confirmation email
+      const emailResponse = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values)
+        body: JSON.stringify({
+          to: values.email,
+          subject: 'Registration Confirmation - Footslog Trek',
+          body: `
+            Dear ${values.fullName},
+
+            Thank you for registering for the Footslog Trek! Your registration has been received and is pending payment.
+
+            Registration Details:
+            - Name: ${values.fullName}
+            - Email: ${values.email}
+            - Phone: ${values.phone}
+            - Emergency Contact: ${values.emergencyContact}
+            - Emergency Phone: ${values.emergencyContact.phone}
+            - Age: ${values.age}
+            - Gender: ${values.gender}
+            - Medical Conditions: ${values.medicalInfo || 'None'}
+            - Dietary Restrictions: ${values.dietaryRestrictions || 'None'}
+            - Equipment Needs: ${values.equipmentNeeds || 'None'}
+
+            Payment Details:
+            - Amount: ₹850
+            - Status: Pending
+
+            Please complete your payment to confirm your registration. Once payment is received, you will receive your ticket with QR code.
+
+            Best regards,
+            Footslog Team
+          `,
+        }),
       });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to submit registration');
+
+      if (!emailResponse.ok) {
+        throw new Error('Failed to send confirmation email');
       }
-      
-      // Get the response data which contains the registration ID
-      const responseData = await response.json();
-      
-      // Save the updated registration data with ID
-      if (responseData && responseData.id) {
-        const updatedData = {
-          ...values,
-          id: responseData.id
-        };
-        localStorage.setItem('footslog_registration', JSON.stringify(updatedData));
-        setRegistrationData(updatedData);
-      } else if (responseData.registration && responseData.registration.id) {
-        // Alternative response format from App Router API
-        const updatedData = {
-          ...values,
-          id: responseData.registration.id
-        };
-        localStorage.setItem('footslog_registration', JSON.stringify(updatedData));
-        setRegistrationData(updatedData);
-      }
-      
-      setIsSubmitting(false)
-      
-      // Move to payment step
-      setCurrentStep('payment')
+
+      // Save registration data to localStorage
+      localStorage.setItem('registrationData', JSON.stringify(values));
+      setRegistrationData(values);
+      setCurrentStep('payment');
       
       toast({
         title: "Registration Submitted!",
         description: "Please complete the payment to finalize your registration.",
       })
     } catch (error) {
-      console.error(error)
-      setIsSubmitting(false)
+      console.error('Registration error:', error);
+      setError(error instanceof Error ? error.message : 'Failed to complete registration');
+      setIsSubmitting(false);
       
       toast({
         title: "Registration Failed",

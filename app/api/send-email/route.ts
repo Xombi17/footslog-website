@@ -19,7 +19,7 @@ export async function OPTIONS() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { to, subject, body } = await request.json();
+    const { to, subject, body, ticketId } = await request.json();
 
     if (!to || !subject || !body) {
       return NextResponse.json(
@@ -28,24 +28,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Create HTML email template
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
+          ${body.split('\n').map(line => {
+            if (line.trim().startsWith('-')) {
+              return `<p style="margin: 5px 0; padding-left: 20px;">${line}</p>`;
+            }
+            if (line.trim() === '') {
+              return '<br>';
+            }
+            return `<p style="margin: 5px 0;">${line}</p>`;
+          }).join('')}
+        </div>
+        
+        ${ticketId ? `
+          <div style="margin-top: 20px; text-align: center;">
+            <h3 style="color: #333;">Your Ticket QR Code</h3>
+            <div style="background-color: white; padding: 20px; border-radius: 8px; display: inline-block;">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(ticketId)}" 
+                   alt="Ticket QR Code" 
+                   style="width: 200px; height: 200px;"/>
+            </div>
+            <p style="margin-top: 10px; color: #666;">Ticket ID: ${ticketId}</p>
+          </div>
+        ` : ''}
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+          <p style="color: #666; font-size: 12px;">
+            This is an automated message. Please do not reply to this email.
+            <br>
+            For any queries, contact us at support@footslog.com
+          </p>
+        </div>
+      </div>
+    `;
+
     // Send email using SendGrid
     const msg = {
       to,
       from: process.env.EMAIL_FROM || 'noreply@footslog.com',
       subject,
       text: body,
-      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
-          <h2 style="color: #2d3748; margin-bottom: 20px;">${subject}</h2>
-          <div style="color: #4a5568; line-height: 1.6;">
-            ${body.replace(/\n/g, '<br>')}
-          </div>
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #718096; font-size: 14px;">
-            <p>This email was sent from Footslog Trekking.</p>
-            <p>If you have any questions, please contact us at support@footslog.com</p>
-          </div>
-        </div>
-      </div>`,
+      html: htmlBody,
     };
 
     await sgMail.send(msg);
@@ -53,13 +79,16 @@ export async function POST(request: NextRequest) {
     // Log the email in Supabase
     const { error: logError } = await supabase
       .from('email_logs')
-      .insert({
-        recipient: to,
-        subject,
-        content: body,
-        sent_at: new Date().toISOString(),
-        status: 'sent'
-      });
+      .insert([
+        {
+          recipient: to,
+          subject,
+          content: body,
+          sent_at: new Date().toISOString(),
+          status: 'sent',
+          ticket_id: ticketId || null
+        }
+      ]);
 
     if (logError) {
       console.error('Error logging email:', logError);
